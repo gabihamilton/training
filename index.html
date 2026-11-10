@@ -175,7 +175,7 @@ const MAX_NAMES = { snatch: 'Snatch', cj: 'Clean & jerk', bs: 'Back squat', fs: 
    r may be a number or a string ("8/leg", "1+1", "30s", "max").
    ============================================================ */
 const LEGS = new Set(['Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift',
-  'Walking lunge','Leg press','Leg curl','Calf raise','Back extension','Overhead squat','Pause back squat']);
+  'Walking lunge','Goblet squat','Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Overhead squat','Pause back squat']);
 
 function rampSessions() {
   const out = [];
@@ -200,15 +200,15 @@ function rampSessions() {
       { n: 'Clean pull', s: 3, r: 3, rpe: '7' },
       { n: 'Romanian deadlift', s: 3, r: 8, rpe: '7' },
       { n: 'Walking lunge', s: 3, r: '10/leg', rpe: '8' },
-      { n: 'Back extension', s: 3, r: 12 },
+      { n: 'Good morning', s: 3, r: 10, rpe: '7' },
     ]});
     out.push({ title: 'Front squat + jerk + glutes', ex: [
       { n: 'Overhead squat', s: 4, r: 3, rpe: '6', note: 'Light. Mobility + position.' },
       t ? { n: 'Front squat', s: 1, r: 3, note: w.fs } : { n: 'Front squat', s: 4, r: 5, rpe: w.rpe },
       { n: 'Push jerk', s: 5, r: 2, rpe: '7' },
       { n: 'Hip thrust', s: 4, r: 8, rpe: '8', note: 'Heavy. Pause 1s at the top.' },
-      { n: 'Leg curl', s: 3, r: 12 },
-      { n: 'Leg press', s: 3, r: 15, rpe: '8', note: 'Pump work. Full depth.' },
+      { n: 'Single-leg DB RDL', s: 3, r: '10/leg', rpe: '8' },
+      { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Pump work. Heels on plates, full depth, slow down.' },
     ]});
   });
   return out.map((s, i) => Object.assign(s, { week: Math.floor(i / 3) + 1 }));
@@ -231,10 +231,10 @@ function decSessions() {
     ]});
     out.push({ week: wk, optional: true, title: 'Legs & glutes pump', ex: [
       { n: 'Bulgarian split squat', s: 3, r: '10/leg', rpe: '8' },
-      { n: 'Leg press', s: 3, r: 15, rpe: '8' },
+      { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Heels on plates, slow down.' },
       { n: 'Hip thrust', s: 3, r: 12, rpe: '8' },
-      { n: 'Leg curl', s: 3, r: 12 },
-      { n: 'Calf raise', s: 3, r: 15 },
+      { n: 'Single-leg DB RDL', s: 3, r: '10/leg', rpe: '8' },
+      { n: 'DB calf raise', s: 3, r: 15, note: 'One leg at a time, on a plate.' },
     ]});
     if (light) out.slice(-3).forEach(s => s.title += ' (deload)');
   });
@@ -263,7 +263,7 @@ function rsrSessions() {
         squat,
         { n: 'Snatch pull', s: 3, r: 3, pct: 0.95, of: 'snatch' },
         { n: 'Hip thrust', s: late ? 3 : 4, r: 8, rpe: '8' },
-        { n: 'Leg curl', s: 3, r: 10 },
+        { n: 'Single-leg DB RDL', s: 3, r: '8/leg', rpe: '7' },
       ]});
       if (d === 1) out.push({ week: w + 1, title: 'C&J + squat', ex: [
         { n: 'Clean & jerk', s: 5, r: '1+1', pct: oly[w], of: 'cj' },
@@ -288,10 +288,11 @@ function rsrSessions() {
 const PHASES = [
   { id: 'ramp', name: 'Ramp-up', when: 'Nov 11 – Nov 30 · no lifting shoes yet', sessions: rampSessions(),
     desc: 'Get positions, joints and squat volume back. Everything is <b>by feel (RPE)</b>: 6 = 4 reps left in the tank, 8 = 2 left. Week 3 has the <b>squat tests</b>: they set your working maxes for December and the Russian squat block. Cardio: the bike commutes are your zone 2, plus an optional easy run.' },
+  // All exercises use only barbell, dumbbells, bench and pull-up bar (no leg machines at the CERN gym).
   { id: 'dec', name: 'December: minimum dose', when: 'Dec 1 – Jan 4 · shoes arrive', sessions: decSessions(),
     desc: '<b>Two sessions a week is a full win</b>; the legs & glutes pump day is a bonus. About 45 min each. Weights are % of your working maxes, so update those in Settings after the ramp-up tests. Week 5 is lighter for the holidays.' },
   { id: 'rsr', name: 'Russian squat block', when: '6 weeks from ~Jan 5', sessions: rsrSessions(),
-    desc: 'The <b>Russian Squat Routine</b> (3×/week at 80%, with volume building to 6×6, then intensity up to a <b>105% attempt</b>), built into your oly sessions. The snatch and C&J stay moderate (70–75%) so the squats get the recovery. Cardio here: <b>bike commutes only</b>, plus easy zone 2 if you feel fresh. Hold off on VO2max intervals until this block is over.' },
+    desc: 'The <b>Russian Squat Routine</b> (3×/week at 80%, with volume building to 6×6, then intensity up to a <b>105% attempt</b>), built into your oly sessions. The snatch and C&J stay moderate (70–75%) so the squats get the recovery. Cardio here: bike commutes, plus <b>very easy zone 2 jogs are fine</b>: 20–30 min, conversational, flat. Put them on rest days or after a lifting session, never the day before a big squat day, and drop them in weeks 5–6 (heavy singles) or if your legs score ≤2/5. Hold off on VO2max intervals until this block is over.' },
   { id: 'next', name: 'Next: oly strength block', when: 'after the RSR test', sessions: [],
     desc: 'Written once we see your new squat max, with front squat emphasis and heavier classic lifts. This is also when the weekly VO2max session comes in.' },
 ];
@@ -643,7 +644,7 @@ function renderProgress() {
       .reduce((a, s) => a + s.exercises.filter(x => LEGS.has(x.name)).reduce((b, x) => b + x.sets.filter(y => y.done).length, 0), 0);
   });
   h += `<div class="section-title">Leg & glute sets per week</div><div class="card chart">${barChart(wks, [legSets], ['var(--done-line)'])}
-    <div class="muted small" style="margin-top:6px">Squats, lunges, hip thrusts, RDLs, leg press/curl. Not counting the oly lifts. For growth, ~12–20 hard sets/week is the target range.</div></div>`;
+    <div class="muted small" style="margin-top:6px">Squats, lunges, split squats, hip thrusts, RDLs, good mornings. Not counting the oly lifts. For growth, ~12–20 hard sets/week is the target range.</div></div>`;
 
   const types = ['bike', 'z2', 'vo2'];
   const cmin = types.map(t => wks.map(w => {
