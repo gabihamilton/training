@@ -159,6 +159,7 @@ function defaultState() {
     },
     sessions: [],   // {id, date, key, title, readiness, notes, exercises:[{name, rpe, note, sets:[{w(kg), r, done}]}]}
     cardio: [],     // {id, date, type, min, km, notes}
+    measures: [],   // {id, date, waist, hips, thighL, thighR, calf, notes} in cm
     skipped: [],    // program keys
     draft: null,
     deleted: {},    // tombstones for sync: id -> ms
@@ -208,6 +209,7 @@ function localItems() {
   });
   add(state.sessions, 'session');
   add(state.cardio, 'cardio');
+  add(state.measures, 'measure');
   m.settings = { id: 'settings', kind: 'settings', date: null, data: state.settings, deleted: false, client_ts: state.settingsTs || 0 };
   m.skipped = { id: 'skipped', kind: 'skipped', date: null, data: state.skipped, deleted: false, client_ts: state.skippedTs || 0 };
   Object.entries(state.deleted || {}).forEach(([id, ts]) => {
@@ -220,6 +222,7 @@ function applyRemote(r) {
   if (r.deleted) {
     state.sessions = state.sessions.filter(s => s.id !== r.id);
     state.cardio = state.cardio.filter(c => c.id !== r.id);
+    state.measures = state.measures.filter(c => c.id !== r.id);
     state.deleted[r.id] = ts;
     return;
   }
@@ -233,7 +236,7 @@ function applyRemote(r) {
     state.skipped = r.data || []; state.skippedTs = ts; state._skippedJson = JSON.stringify(state.skipped);
     return;
   }
-  const list = r.kind === 'session' ? state.sessions : r.kind === 'cardio' ? state.cardio : null;
+  const list = r.kind === 'session' ? state.sessions : r.kind === 'cardio' ? state.cardio : r.kind === 'measure' ? state.measures : null;
   if (!list) return;
   const item = Object.assign({}, r.data, { _ts: ts });
   const i = list.findIndex(x => x.id === r.id);
@@ -588,6 +591,11 @@ function renderToday() {
     h += `<div class="card"><h2>Program complete 🎉</h2><p class="muted">Time to write the next block. Ask Claude with your new maxes.</p></div>`;
   }
   h += `<button class="btn secondary" onclick="startSession(null)">Start a free session</button>`;
+  const lastM = state.measures.length ? state.measures[state.measures.length - 1].date : null;
+  const daysSince = lastM ? Math.round((new Date(todayISO()) - new Date(lastM)) / 864e5) : null;
+  if (!lastM || daysSince >= 28) h += `<div class="card" style="margin-top:12px"><span class="pill warm">Monthly</span>
+    <h2>Measurements due</h2><p class="muted">${lastM ? 'Last ones were ' + daysSince + ' days ago.' : 'Take a first set to have a baseline.'} Best done first thing in the morning, before eating or training.</p>
+    <button class="btn secondary" onclick="tab='progress';measureOpen=true;render();setTimeout(()=>document.getElementById('measure-form').scrollIntoView(),50)">Add measurements</button></div>`;
 
   // cardio quick log
   h += `<div class="section-title">Log cardio</div><div class="card">
@@ -798,26 +806,28 @@ function liftSeries(k) {
   const name = MAX_NAMES[k];
   return state.sessions.map(s => ({ date: s.date, v: bestFrom(s.exercises.filter(e => e.name === name), k) })).filter(p => p.v > 0);
 }
-function lineChart(pts, refKg) {
-  if (pts.length < 1) return `<div class="empty">Log a session with this lift to see the trend.</div>`;
+function lineChart(pts, refKg, opt) {
+  const cv = opt && opt.raw ? (v => v) : toDisp;
+  const lab = opt && opt.raw ? (v => v + ' ' + opt.unit) : (v => fmt(v) + ' ' + U());
+  if (pts.length < 1) return `<div class="empty">${opt && opt.empty || 'Log a session with this lift to see the trend.'}</div>`;
   const W = 440, H = 180, P = { l: 34, r: 10, t: 12, b: 22 };
   const xs = pts.map(p => new Date(p.date + 'T12:00').getTime());
-  const ys = pts.map(p => toDisp(p.v));
-  if (refKg) ys.push(toDisp(refKg));
+  const ys = pts.map(p => cv(p.v));
+  if (refKg) ys.push(cv(refKg));
   let x0 = Math.min(...xs), x1 = Math.max(...xs); if (x0 === x1) { x0 -= 864e5 * 3; x1 += 864e5 * 3; }
   let y0 = Math.min(...ys), y1 = Math.max(...ys); const pad = Math.max(2, (y1 - y0) * 0.15); y0 -= pad; y1 += pad;
   const sx = x => P.l + (x - x0) / (x1 - x0) * (W - P.l - P.r);
   const sy = y => P.t + (1 - (y - y0) / (y1 - y0)) * (H - P.t - P.b);
-  const path = pts.map((p, i) => (i ? 'L' : 'M') + sx(xs[i]).toFixed(1) + ' ' + sy(toDisp(p.v)).toFixed(1)).join(' ');
+  const path = pts.map((p, i) => (i ? 'L' : 'M') + sx(xs[i]).toFixed(1) + ' ' + sy(cv(p.v)).toFixed(1)).join(' ');
   let g = '';
   [y0 + pad, (y0 + y1) / 2, y1 - pad].forEach(v => {
     g += `<line x1="${P.l}" x2="${W - P.r}" y1="${sy(v)}" y2="${sy(v)}" stroke="var(--line)"/><text x="2" y="${sy(v) + 3}" font-size="10" fill="var(--ink-soft)">${Math.round(v)}</text>`;
   });
-  if (refKg) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${sy(toDisp(refKg))}" y2="${sy(toDisp(refKg))}" stroke="var(--warm)" stroke-dasharray="4 4"/>
-    <text x="${W - P.r}" y="${sy(toDisp(refKg)) - 4}" font-size="10" fill="var(--warm)" text-anchor="end">working max</text>`;
+  if (refKg) g += `<line x1="${P.l}" x2="${W - P.r}" y1="${sy(cv(refKg))}" y2="${sy(cv(refKg))}" stroke="var(--warm)" stroke-dasharray="4 4"/>
+    <text x="${W - P.r}" y="${sy(cv(refKg)) - 4}" font-size="10" fill="var(--warm)" text-anchor="end">working max</text>`;
   const fd = t => new Date(t).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   g += `<text x="${P.l}" y="${H - 4}" font-size="10" fill="var(--ink-soft)">${fd(x0)}</text><text x="${W - P.r}" y="${H - 4}" font-size="10" fill="var(--ink-soft)" text-anchor="end">${fd(x1)}</text>`;
-  const dots = pts.map((p, i) => `<circle cx="${sx(xs[i]).toFixed(1)}" cy="${sy(toDisp(p.v)).toFixed(1)}" r="3.5" fill="var(--accent)"><title>${p.date}: ${fmt(p.v)} ${U()}</title></circle>`).join('');
+  const dots = pts.map((p, i) => `<circle cx="${sx(xs[i]).toFixed(1)}" cy="${sy(cv(p.v)).toFixed(1)}" r="3.5" fill="var(--accent)"><title>${p.date}: ${lab(p.v)}</title></circle>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}">${g}<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2"/>${dots}</svg>`;
 }
 function weeks(n) {
@@ -879,7 +889,60 @@ function renderProgress() {
   }));
   h += `<div class="section-title">Cardio minutes per week</div><div class="card chart">${barChart(wks, cmin, ['var(--c-bike)', 'var(--c-z2)', 'var(--c-vo2)'])}
     <div class="legend"><span><i style="background:var(--c-bike)"></i>Bike commute</span><span><i style="background:var(--c-z2)"></i>Zone 2</span><span><i style="background:var(--c-vo2)"></i>VO2max</span></div></div>`;
+  return h + renderMeasures();
+}
+
+/* ============================================================
+   Measurements (cm), monthly
+   ============================================================ */
+const MEAS = [
+  ['thighL', 'Thigh (left)', 'Standing, weight on both feet. Fixed spot: 15 cm above the top of the kneecap.'],
+  ['thighR', 'Thigh (right)', 'Same spot on the right leg.'],
+  ['hips', 'Glutes / hips', 'Feet together, widest point of the glutes.'],
+  ['waist', 'Waist', 'At the navel, relaxed, after a normal breath out.'],
+  ['calf', 'Calf (optional)', 'Widest point, standing.'],
+];
+let measureOpen = false, measSel = 'thighL';
+function renderMeasures() {
+  const ms = state.measures;
+  let h = `<div class="section-title">Measurements</div>`;
+  if (ms.length) {
+    const first = ms[0], last = ms[ms.length - 1];
+    h += `<div class="card"><div class="muted small" style="margin-bottom:6px">Latest (${niceDate(last.date)}) vs first (${niceDate(first.date)})</div>`;
+    MEAS.forEach(([k, l]) => {
+      if (last[k] == null) return;
+      const d = first[k] != null && ms.length > 1 ? Math.round((last[k] - first[k]) * 10) / 10 : null;
+      h += `<div class="hist-item"><span>${l}</span><span>${last[k]} cm${d != null ? ` <span class="muted">(${d > 0 ? '+' : ''}${d})</span>` : ''}</span></div>`;
+    });
+    h += `</div>`;
+    h += `<div class="chart-head"><span class="muted small">Trend</span><select onchange="measSel=this.value;render()">
+      ${MEAS.map(([k, l]) => `<option value="${k}"${k === measSel ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div class="card chart">${lineChart(ms.filter(m => m[measSel] != null).map(m => ({ date: m.date, v: m[measSel] })), null, { raw: true, unit: 'cm', empty: 'No entries for this one yet.' })}</div>`;
+  }
+  h += `<details class="card" id="measure-form" ${measureOpen || !ms.length ? 'open' : ''}><summary><h2>Add measurements</h2></summary>
+    <p class="phase-desc"><b>When:</b> first thing in the morning, after the bathroom, before eating, drinking or training. Same day each month, never right after a workout (the pump adds 1–2 cm). Muscles relaxed, tape snug but not squeezing, take each one twice and use the average. Take photos the same morning.</p>
+    <div class="field"><label>Date</label><input type="date" id="m-date" value="${todayISO()}"></div>
+    ${MEAS.map(([k, l, hint]) => `<div class="field"><label>${l} (cm)</label><input type="number" step="0.1" inputmode="decimal" id="m-${k}"><div class="muted small" style="margin-top:3px">${hint}</div></div>`).join('')}
+    <div class="field"><label>Notes</label><input id="m-notes"></div>
+    <button class="btn" onclick="addMeasure()">Save measurements</button>
+  </details>`;
+  if (ms.length) {
+    h += `<div class="card">${ms.slice().reverse().map(m => `<div class="hist-item"><span>${niceDate(m.date)}<div class="meta">${MEAS.filter(([k]) => m[k] != null).map(([k, l]) => l.replace(' (optional)', '') + ' ' + m[k]).join(' · ')}</div></span>
+      <button class="link-btn danger" onclick="delMeasure('${m.id}')">✕</button></div>`).join('')}</div>`;
+  }
   return h;
+}
+function addMeasure() {
+  const rec = { _ts: Date.now(), id: uid(), date: $('#m-date').value || todayISO(), notes: $('#m-notes').value.trim() };
+  let any = false;
+  MEAS.forEach(([k]) => { const v = parseFloat($('#m-' + k).value); if (!isNaN(v) && v > 0) { rec[k] = v; any = true; } });
+  if (!any) { toast('Enter at least one measurement'); return; }
+  state.measures.push(rec); state.measures.sort((a, b) => a.date.localeCompare(b.date));
+  measureOpen = false; save(); scheduleSync(); toast('Measurements saved'); render();
+}
+function delMeasure(id) {
+  if (!confirm('Delete these measurements?')) return;
+  state.measures = state.measures.filter(m => m.id !== id); state.deleted[id] = Date.now(); save(); scheduleSync(); render();
 }
 
 /* ============================================================
@@ -926,7 +989,7 @@ function importData(f) {
     try { const s = JSON.parse(t); if (!s.settings) throw 0; if (!confirm('Replace all current data with this file?')) return;
       state = Object.assign(defaultState(), s); markSynced();
       const now = Date.now();
-      state.sessions.forEach(x => x._ts = now); state.cardio.forEach(x => x._ts = now);
+      state.sessions.forEach(x => x._ts = now); state.cardio.forEach(x => x._ts = now); state.measures.forEach(x => x._ts = now);
       state.settingsTs = now; state.skippedTs = now;
       save(); scheduleSync(); render(); toast('Imported'); }
     catch (e) { toast('Not a valid backup file'); }
