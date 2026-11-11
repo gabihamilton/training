@@ -101,6 +101,16 @@
   .phase-desc b { color: var(--ink); font-weight: 600; }
   .max-row { display: grid; grid-template-columns: 1fr 110px; gap: 8px; align-items: center; padding: 6px 0; }
   .max-row .hint { grid-column: 1 / -1; font-size: 12px; color: var(--ink-soft); margin-top: -2px; }
+  #rest-bar { position: fixed; left: 50%; bottom: 12px; transform: translate(-50%, 150%); width: calc(100% - 24px); max-width: 456px;
+    background: var(--ink); color: var(--bg); border-radius: 14px; overflow: hidden; transition: transform .2s; z-index: 10; }
+  #rest-bar.show { transform: translate(-50%, 0); }
+  #rest-bar.over { background: var(--done-line); color: #fff; }
+  #rest-bar .rt-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(127,127,127,.25); transition: width .25s linear; }
+  #rest-bar .rt-row { position: relative; display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+  #rest-bar .rt-mid { flex: 1; text-align: center; }
+  #rest-bar .rt-time { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  #rest-bar .rt-name { font-size: 12px; opacity: .8; }
+  #rest-bar button { background: rgba(127,127,127,.25); color: inherit; border: none; border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
   .toast.show { opacity: 1; }
   .empty { text-align: center; color: var(--ink-soft); font-size: 13px; padding: 20px 0; }
@@ -122,6 +132,15 @@
   <section id="view"></section>
 </main>
 <div class="toast" id="toast"></div>
+<div id="rest-bar">
+  <div class="rt-fill"></div>
+  <div class="rt-row">
+    <button onclick="adjustRest(-15)">−15</button>
+    <div class="rt-mid"><div class="rt-time"></div><div class="rt-name"></div></div>
+    <button onclick="adjustRest(15)">+15</button>
+    <button onclick="stopRest()">✕</button>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -435,20 +454,34 @@ function prescText(e) {
 
 // Rough session length (min): warm-up + per set (work + rest). Rest grows with intensity,
 // so heavy squat days come out longer. Calibrated on session 1 (actual 55 min at low RPE).
+// Rest between sets (minutes): longer for heavier squats, short for accessories.
+function restMin(e) {
+  const n = e.n, r = String(e.r);
+  if (n === 'Box jump') return 1;
+  if (/m$/.test(r)) return 1.5;
+  if (n === 'Back squat' || n === 'Front squat') {
+    if (e.s === 1) return 3;
+    const p = e.pct || (parseFloat(e.rpe) >= 8 ? 0.8 : 0.7);
+    return p >= 0.9 ? 4 : p >= 0.8 ? 3 : 2;
+  }
+  if (/snatch|clean|jerk|push press|pull$/i.test(n)) return 1.75;
+  return 1.25;
+}
+function restLabel(sec) { return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); }
+
 function estMin(sess) {
   let t = 10;
   sess.ex.forEach(e => {
     const n = e.n, r = String(e.r), reps = repsNum(e.r) || 5;
-    let work = 0.5, rest = 1.25;
-    if (/snatch|clean|jerk|push press|pull$/i.test(n)) { work = 0.5; rest = 1.75; if (e.pct && !/pull$/i.test(n)) t += 4; }
+    let work = 0.5; const rest = restMin(e);
+    if (/snatch|clean|jerk|push press|pull$/i.test(n) && e.pct && !/pull$/i.test(n)) t += 4;
     if (n === 'Back squat' || n === 'Front squat') {
       if (e.s === 1) { t += 15; return; }                  // work up to a heavy single/triple
       const p = e.pct || (parseFloat(e.rpe) >= 8 ? 0.8 : 0.7);
-      work = 0.3 + 0.12 * reps; rest = p >= 0.9 ? 4 : p >= 0.8 ? 3 : 2;
+      work = 0.3 + 0.12 * reps;
       if (p >= 0.7) t += 6;                                // warm-up sets
     }
-    if (n === 'Box jump') { work = 0.3; rest = 1; }
-    if (/m$/.test(r)) { work = 0.5; rest = 1.5; }
+    if (n === 'Box jump') work = 0.3;
     if (r.includes('/leg')) work *= 2;
     t += e.s * (work + rest);
   });
@@ -489,7 +522,7 @@ function startSession(key) {
       let w = null;
       if (e.pct && state.settings.maxes[e.of]) w = toKg(roundDisp(toDisp(e.pct * state.settings.maxes[e.of])));
       else w = lastWeightFor(e.n);
-      return { name: e.n, target: prescText(e), note: e.note || '', rpe: '',
+      return { name: e.n, target: prescText(e), note: e.note || '', rpe: '', rest: Math.round(restMin(e) * 4) * 15,
         sets: Array.from({ length: e.s }, () => ({ w, r: String(e.r), done: false })) };
     }) : [],
   };
@@ -622,7 +655,7 @@ function renderDraft() {
   d.exercises.forEach((e, i) => {
     const complete = e.sets.length && e.sets.every(s => s.done);
     h += `<div class="exercise${complete ? ' complete' : ''}">
-      <div class="ex-head"><span class="ex-name">${esc(e.name)}</span><span class="ex-target">${esc(e.target || '')}</span></div>
+      <div class="ex-head"><span class="ex-name">${esc(e.name)}</span><span class="ex-target">${esc(e.target || '')}${e.target ? '<br>' : ''}rest ${restLabel(e.rest || 90)}</span></div>
       ${e.note ? `<div class="ex-note">${esc(e.note)}</div>` : ''}
       <div class="set-row"><span></span><span class="unit">${U()}</span><span class="unit">reps</span><span></span></div>
       ${e.sets.map((s, j) => `<div class="set-row">
@@ -656,7 +689,60 @@ function setW(i, j, v) {
   for (let k = j + 1; k < ex.sets.length; k++) if (!ex.sets[k].done) ex.sets[k].w = kg;
   save(); render();
 }
-function toggleSet(i, j) { const s = state.draft.exercises[i].sets[j]; s.done = !s.done; save(); render(); }
+function toggleSet(i, j) {
+  const ex = state.draft.exercises[i], s = ex.sets[j];
+  s.done = !s.done; save(); render();
+  if (s.done) startRest(ex.rest || 90, ex.name);
+}
+
+/* ============================================================
+   Rest timer: starts when a set is ticked. Runs off an end timestamp,
+   so it stays right if the phone locks; the beep only plays while the app is open.
+   ============================================================ */
+let restEnd = 0, restTotal = 0, restName = '', restTick = null, restDoneAt = 0, audioCtx = null;
+function unlockAudio() {
+  try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {}
+}
+function beep() {
+  try {
+    if (!audioCtx) return;
+    [0, 0.25, 0.5].forEach(d => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      const t = audioCtx.currentTime + d;
+      g.gain.setValueAtTime(0.3, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+    });
+  } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+function startRest(sec, name) {
+  unlockAudio();
+  restTotal = sec; restEnd = Date.now() + sec * 1000; restName = name; restDoneAt = 0;
+  clearInterval(restTick); restTick = setInterval(drawRest, 250); drawRest();
+}
+function adjustRest(d) { if (!restEnd) return; restEnd += d * 1000; restTotal = Math.max(1, restTotal + d); restDoneAt = 0; drawRest(); }
+function stopRest() { restEnd = 0; clearInterval(restTick); restTick = null; drawRest(); }
+function drawRest() {
+  const bar = document.getElementById('rest-bar');
+  if (!restEnd || !state.draft) { bar.classList.remove('show'); return; }
+  const left = Math.ceil((restEnd - Date.now()) / 1000);
+  bar.classList.add('show');
+  if (left <= 0) {
+    if (!restDoneAt) { restDoneAt = Date.now(); beep(); }
+    bar.classList.add('over');
+    bar.querySelector('.rt-time').textContent = 'Go!';
+    bar.querySelector('.rt-name').textContent = 'Rest over · next set of ' + restName;
+    bar.querySelector('.rt-fill').style.width = '100%';
+    if (Date.now() - restDoneAt > 15000) stopRest();
+    return;
+  }
+  bar.classList.remove('over');
+  bar.querySelector('.rt-time').textContent = restLabel(left);
+  bar.querySelector('.rt-name').textContent = 'Rest · ' + restName;
+  bar.querySelector('.rt-fill').style.width = (100 * (1 - left / restTotal)).toFixed(1) + '%';
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && restEnd) drawRest(); });
 function addSet(i) { const sets = state.draft.exercises[i].sets; const l = sets[sets.length - 1]; sets.push({ w: l ? l.w : null, r: l ? l.r : '5', done: false }); save(); render(); }
 function rmSet(i) { state.draft.exercises[i].sets.pop(); save(); render(); }
 function addExercise() {
