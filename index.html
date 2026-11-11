@@ -175,7 +175,14 @@ const MAX_NAMES = { snatch: 'Snatch', cj: 'Clean & jerk', bs: 'Back squat', fs: 
    r may be a number or a string ("8/leg", "1+1", "30s", "max").
    ============================================================ */
 const LEGS = new Set(['Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift',
-  'Walking lunge','Goblet squat','Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','Overhead squat','Pause back squat']);
+  'Walking lunge','Goblet squat','Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Overhead squat','Pause back squat']);
+
+// GHD sit-ups: start conservative, they can make abs very sore at first
+function ghdSitup(week0) {
+  return week0 === 0
+    ? { n: 'GHD sit-up', s: 2, r: 8, note: 'First week: short range (to parallel), well short of failure. They can make abs very sore at first.' }
+    : { n: 'GHD sit-up', s: 3, r: 10 };
+}
 
 function rampSessions() {
   const out = [];
@@ -192,7 +199,7 @@ function rampSessions() {
       t ? { n: 'Back squat', s: 1, r: 3, note: w.bs } : { n: 'Back squat', s: 4, r: i ? 5 : 6, rpe: w.rpe, note: 'Small plates under heels until the shoes arrive.' },
       { n: 'Bulgarian split squat', s: 3, r: '8/leg', rpe: '8' },
       { n: 'Hip thrust', s: 3, r: 10, rpe: '8' },
-      { n: 'Plank', s: 3, r: '30s' },
+      ghdSitup(i),
     ]});
     out.push({ title: 'Clean + hinge', ex: [
       { n: 'Hang power clean', s: 5, r: 3, rpe: '6' },
@@ -200,7 +207,7 @@ function rampSessions() {
       { n: 'Clean pull', s: 3, r: 3, rpe: '7' },
       { n: 'Romanian deadlift', s: 3, r: 8, rpe: '7' },
       { n: 'Walking lunge', s: 3, r: '10/leg', rpe: '8' },
-      { n: 'Good morning', s: 3, r: 10, rpe: '7' },
+      { n: 'GHD hip extension', s: 3, r: 12, rpe: '8', note: 'Hips on the pad, squeeze glutes at the top. Hold a plate when it gets easy.' },
     ]});
     out.push({ title: 'Front squat + jerk + glutes', ex: [
       { n: 'Overhead squat', s: 4, r: 3, rpe: '6', note: 'Light. Mobility + position.' },
@@ -209,6 +216,7 @@ function rampSessions() {
       { n: 'Hip thrust', s: 4, r: 8, rpe: '8', note: 'Heavy. Pause 1s at the top.' },
       { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap. No strap? Single-leg DB RDL instead.' },
       { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Pump work. Heels on plates, full depth, slow down.' },
+      ghdSitup(i),
     ]});
   });
   return out.map((s, i) => Object.assign(s, { week: Math.floor(i / 3) + 1 }));
@@ -223,11 +231,13 @@ function decSessions() {
       { n: 'Snatch', s: 5, r: 2, pct: p, of: 'snatch' },
       { n: 'Back squat', s: 5, r: 5, pct: p, of: 'bs' },
       { n: 'Hip thrust', s: 3, r: 10, rpe: '8' },
+      { n: 'GHD sit-up', s: 3, r: 10 },
     ]});
     out.push({ week: wk, title: 'C&J + front squat', ex: [
       { n: 'Clean & jerk', s: 5, r: '1+1', pct: p, of: 'cj' },
       { n: 'Front squat', s: 4, r: 4, pct: p, of: 'fs' },
       { n: 'Romanian deadlift', s: 3, r: 8, rpe: '7' },
+      { n: 'GHD sit-up', s: 3, r: 10 },
     ]});
     out.push({ week: wk, optional: true, title: 'Legs & glutes pump', ex: [
       { n: 'Bulgarian split squat', s: 3, r: '10/leg', rpe: '8' },
@@ -265,6 +275,7 @@ function rsrSessions() {
         { n: 'Snatch pull', s: 3, r: 3, pct: 0.95, of: 'snatch' },
         { n: 'Hip thrust', s: late ? 3 : 4, r: 8, rpe: '8' },
         { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap.' },
+        { n: 'GHD sit-up', s: 3, r: 12 },
       ]});
       if (d === 1) out.push({ week: w + 1, title: 'C&J + squat', ex: [
         { n: 'Clean & jerk', s: 5, r: '1+1', pct: oly[w], of: 'cj' },
@@ -272,6 +283,7 @@ function rsrSessions() {
         { n: 'Romanian deadlift', s: 3, r: 6, rpe: '7' },
         { n: 'Strict press', s: 3, r: 8, rpe: '8' },
         { n: 'Pull-up', s: 3, r: 'max' },
+        { n: 'GHD sit-up', s: 3, r: 12 },
       ]});
       if (d === 2) out.push({ week: w + 1, title: 'Power lifts + squat', ex: [
         { n: 'Power snatch', s: 5, r: 2, pct: 0.65, of: 'snatch' },
@@ -279,7 +291,7 @@ function rsrSessions() {
         squat,
         ...(late ? [] : [{ n: 'Bulgarian split squat', s: 3, r: '8/leg', rpe: '7' }]),
         { n: 'Hip thrust', s: 3, r: 12, rpe: '8' },
-        { n: 'Cable pull-through', s: 3, r: 12, rpe: '7' },
+        { n: 'GHD hip extension', s: 3, r: 12, rpe: '8' },
         { n: 'Seated cable row', s: 3, r: 10 },
       ]});
     });
