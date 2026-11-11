@@ -274,7 +274,7 @@ const MAX_NAMES = { snatch: 'Snatch', cj: 'Clean & jerk', bs: 'Back squat', fs: 
    r may be a number or a string ("8/leg", "1+1", "30s", "max").
    ============================================================ */
 const LEGS = new Set(['Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift',
-  'Walking lunge','Goblet squat','Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Overhead squat','Pause back squat']);
+  'Walking lunge','Goblet squat','Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat']);
 
 // GHD sit-ups: start conservative, they can make abs very sore at first
 function ghdSitup(week0) {
@@ -293,6 +293,7 @@ function rampSessions() {
   wk.forEach((w, i) => {
     const t = i === 2;
     out.push({ title: 'Snatch + squat', ex: [
+      { n: 'Box jump', s: 4, r: 2, note: 'For height. Full reset between jumps, step down.' },
       { n: 'Hang power snatch', s: 5, r: 3, rpe: '6', note: 'Above the knee. Positions, not weight.' },
       { n: 'Snatch pull', s: 3, r: 3, rpe: '7' },
       t ? { n: 'Back squat', s: 1, r: 3, note: w.bs } : { n: 'Back squat', s: 4, r: i ? 5 : 6, rpe: w.rpe, note: 'Small plates under heels until the shoes arrive.' },
@@ -301,6 +302,7 @@ function rampSessions() {
       ghdSitup(i),
     ]});
     out.push({ title: 'Clean + hinge', ex: [
+      { n: 'Box jump', s: 4, r: 2, note: 'For height. Full reset between jumps, step down.' },
       { n: 'Hang power clean', s: 5, r: 3, rpe: '6' },
       { n: 'Push press', s: 4, r: 4, rpe: '7' },
       { n: 'Clean pull', s: 3, r: 3, rpe: '7' },
@@ -314,7 +316,7 @@ function rampSessions() {
       { n: 'Push jerk', s: 5, r: 2, rpe: '7' },
       { n: 'Hip thrust', s: 4, r: 8, rpe: '8', note: 'Heavy. Pause 1s at the top.' },
       { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap. No strap? Single-leg DB RDL instead.' },
-      { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Pump work. Heels on plates, full depth, slow down.' },
+      { n: 'Sled push', s: 4, r: '20m', note: 'Heavy enough to be a grind, not a sprint. Rest ~90s.' },
       ghdSitup(i),
     ]});
   });
@@ -327,6 +329,7 @@ function decSessions() {
   pcts.forEach((p, i) => {
     const wk = i + 1, light = i === 4;
     out.push({ week: wk, title: 'Snatch + back squat', ex: [
+      { n: 'Box jump', s: 3, r: 2, note: 'For height. Full reset between jumps, step down.' },
       { n: 'Snatch', s: 5, r: 2, pct: p, of: 'snatch' },
       { n: 'Back squat', s: 5, r: 5, pct: p, of: 'bs' },
       { n: 'Hip thrust', s: 3, r: 10, rpe: '8' },
@@ -342,9 +345,10 @@ function decSessions() {
       { n: 'Bulgarian split squat', s: 3, r: '10/leg', rpe: '8' },
       { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Heels on plates, slow down.' },
       { n: 'Hip thrust', s: 3, r: 12, rpe: '8' },
-      { n: 'Cable pull-through', s: 3, r: 15, rpe: '8', note: 'Rope attachment. Hinge, squeeze glutes hard at the top.' },
+      { n: 'Kettlebell swing', s: 4, r: 15, note: 'Hip snap, not a squat. Squeeze glutes hard at the top.' },
       { n: 'Cable kickback', s: 2, r: '12/leg', rpe: '9' },
       { n: 'DB calf raise', s: 3, r: 15, note: 'One leg at a time, on a plate.' },
+      { n: 'Sled push', s: 4, r: '20m', note: 'Finisher. Heavy, steady.' },
     ]});
     if (light) out.slice(-3).forEach(s => s.title += ' (deload)');
   });
@@ -368,10 +372,11 @@ function rsrSessions() {
     wk.forEach(([s, r, p], d) => {
       const squat = { n: 'Back squat', s, r, pct: p, of: 'bs',
         note: p > 1 ? 'New max attempt. Belt + good warm-up.' : (s * r >= 30 ? 'The big one. Rest 3–4 min between sets.' : '') };
+      const jumps = { n: 'Box jump', s: late ? 3 : 4, r: 2, note: 'For height. Full reset between jumps, step down.' };
       if (d === 0) out.push({ week: w + 1, title: 'Snatch + squat', ex: [
+        jumps,
         { n: 'Snatch', s: 6, r: 2, pct: oly[w], of: 'snatch' },
         squat,
-        { n: 'Snatch pull', s: 3, r: 3, pct: 0.95, of: 'snatch' },
         { n: 'Hip thrust', s: late ? 3 : 4, r: 8, rpe: '8' },
         { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap.' },
         { n: 'GHD sit-up', s: 3, r: 12 },
@@ -381,17 +386,17 @@ function rsrSessions() {
         squat,
         { n: 'Romanian deadlift', s: 3, r: 6, rpe: '7' },
         { n: 'Strict press', s: 3, r: 8, rpe: '8' },
+        { n: 'Seated cable row', s: 3, r: 10 },
         { n: 'Pull-up', s: 3, r: 'max' },
         { n: 'GHD sit-up', s: 3, r: 12 },
       ]});
       if (d === 2) out.push({ week: w + 1, title: 'Power lifts + squat', ex: [
+        jumps,
         { n: 'Power snatch', s: 5, r: 2, pct: 0.65, of: 'snatch' },
         { n: 'Power clean & jerk', s: 4, r: '1+1', pct: 0.65, of: 'cj' },
         squat,
-        ...(late ? [] : [{ n: 'Bulgarian split squat', s: 3, r: '8/leg', rpe: '7' }]),
         { n: 'Hip thrust', s: 3, r: 12, rpe: '8' },
         { n: 'GHD hip extension', s: 3, r: 12, rpe: '8' },
-        { n: 'Seated cable row', s: 3, r: 10 },
       ]});
     });
   });
@@ -426,6 +431,28 @@ function prescText(e) {
     if (max) t += ' · ' + fmt(e.pct * max, true) + ' ' + U();
   } else if (e.rpe) t += ' @ RPE ' + e.rpe;
   return t;
+}
+
+// Rough session length (min): warm-up + per set (work + rest). Rest grows with intensity,
+// so heavy squat days come out longer. Calibrated on session 1 (actual 55 min at low RPE).
+function estMin(sess) {
+  let t = 10;
+  sess.ex.forEach(e => {
+    const n = e.n, r = String(e.r), reps = repsNum(e.r) || 5;
+    let work = 0.5, rest = 1.25;
+    if (/snatch|clean|jerk|push press|pull$/i.test(n)) { work = 0.5; rest = 1.75; if (e.pct && !/pull$/i.test(n)) t += 4; }
+    if (n === 'Back squat' || n === 'Front squat') {
+      if (e.s === 1) { t += 15; return; }                  // work up to a heavy single/triple
+      const p = e.pct || (parseFloat(e.rpe) >= 8 ? 0.8 : 0.7);
+      work = 0.3 + 0.12 * reps; rest = p >= 0.9 ? 4 : p >= 0.8 ? 3 : 2;
+      if (p >= 0.7) t += 6;                                // warm-up sets
+    }
+    if (n === 'Box jump') { work = 0.3; rest = 1; }
+    if (/m$/.test(r)) { work = 0.5; rest = 1.5; }
+    if (r.includes('/leg')) work *= 2;
+    t += e.s * (work + rest);
+  });
+  return Math.round(t / 5) * 5;
 }
 
 /* ============================================================
@@ -518,7 +545,7 @@ function renderToday() {
   let h = '';
   if (n) {
     h += `<div class="card next">
-      <span class="pill${n.optional ? ' warm' : ''}">${esc(n.phase.name)} · week ${n.week}${n.optional ? ' · optional' : ''}</span>
+      <span class="pill${n.optional ? ' warm' : ''}">${esc(n.phase.name)} · week ${n.week}${n.optional ? ' · optional' : ''} · ~${estMin(n)} min</span>
       <h2>${esc(n.title)}</h2>
       <ul class="ex-list">${n.ex.map(e => `<li><span>${esc(e.n)}</span><span class="presc">${esc(prescText(e))}</span></li>`).join('')}</ul>
       <button class="btn" onclick="startSession('${n.key}')">Start session</button>
@@ -670,7 +697,7 @@ function renderProgram() {
         : `<button class="link-btn" onclick="tab='today';startSession('${s.key}');setTabs()">do this</button>`;
       h += `<div class="prog-sess${isDone ? ' is-done' : ''}${isNext ? ' is-next' : ''}">
         <span>${isNext ? '→ ' : ''}${esc(s.title)}${s.optional ? ' <span class="pill warm">bonus</span>' : ''}
-        <div class="muted small" style="font-weight:400">${s.ex.filter(e => e.of === 'bs' || e.n === 'Back squat' || e.n === 'Front squat').map(e => esc(e.n) + ' ' + esc(prescText(e))).join(' · ')}</div></span>${status}</div>`;
+        <div class="muted small" style="font-weight:400">~${estMin(s)} min · ${s.ex.filter(e => e.of === 'bs' || e.n === 'Back squat' || e.n === 'Front squat').map(e => esc(e.n) + ' ' + esc(prescText(e))).join(' · ')}</div></span>${status}</div>`;
     });
     h += `</details>`;
   });
