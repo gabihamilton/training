@@ -159,7 +159,7 @@ function defaultState() {
     },
     sessions: [],   // {id, date, key, title, readiness, notes, exercises:[{name, rpe, note, sets:[{w(kg), r, done}]}]}
     cardio: [],     // {id, date, type, min, km, notes}
-    measures: [],   // {id, date, waist, hips, thighL, thighR, calf, notes} in cm
+    measures: [],   // {id, date, waist, hips, thighL, thighR, calf, bicep, forearm, notes} in cm
     skipped: [],    // program keys
     draft: null,
     deleted: {},    // tombstones for sync: id -> ms
@@ -901,6 +901,8 @@ const MEAS = [
   ['hips', 'Glutes / hips', 'Feet together, widest point of the glutes.'],
   ['waist', 'Waist', 'At the navel, relaxed, after a normal breath out.'],
   ['calf', 'Calf (optional)', 'Widest point, standing.'],
+  ['bicep', 'Bicep (flexed)', 'Same arm every time. Arm out to the side, elbow at 90°, flex hard; widest point of the bicep.'],
+  ['forearm', 'Forearm', 'Same arm. Arm straight, hand open and relaxed; widest point just below the elbow.'],
 ];
 let measureOpen = false, measSel = 'thighL';
 function renderMeasures() {
