@@ -451,7 +451,19 @@ const HOME_BANDS = { key: 'home:bands', home: true, title: 'Home: glutes + abs',
   { n: 'Side plank', s: 2, r: '30s/side', note: 'Hips high, body in a straight line. Top leg forward if it\'s too hard.' },
   { n: 'Hollow hold', s: 3, r: '20–30s', note: 'Low back down, arms overhead. Bend the knees to make it easier.' },
 ]};
-const BY_KEY = Object.fromEntries(ALL.concat([HOME_BANDS]).map(s => [s.key, s]));
+// Optional gym arms day: not part of the queue. Light on shoulders on purpose (already broad); biceps, triceps, forearms.
+const ARMS = { key: 'extra:arms', extra: true, title: 'Gym: arms', phase: { name: 'Extra' }, ex: [
+  { n: 'Chin-up', s: 3, r: '6–8', rpe: '8', note: 'Palms facing you, full hang to chin over the bar. Band-assisted if needed.' },
+  { n: 'Close-grip bench press', s: 3, r: 8, rpe: '8', note: 'Hands shoulder-width, elbows tucked.' },
+  { n: 'Incline DB curl', s: 3, r: '10–12', rpe: '9', note: 'Bench at ~60°, arms hang straight down. Slow lowering.' },
+  { n: 'Cable triceps pushdown', s: 3, r: '12', rpe: '9', note: 'Rope or bar. Elbows pinned to your sides.' },
+  { n: 'Hammer curl', s: 3, r: '12', rpe: '9' },
+  { n: 'Overhead cable triceps extension', s: 3, r: '12', rpe: '9', note: 'Face away from the cable, rope behind the head.' },
+  { n: 'Reverse curl', s: 2, r: '15', rpe: '9', note: 'Overhand grip, EZ bar or cable. Forearms.' },
+]};
+// Exercises suggested in the free session's "Add exercise" list (park bars, bodyweight, etc.)
+const EXTRA_NAMES = ['Dip','Pull-up','Australian pull-up','L-sit','Push-up','Hanging knee raise','Pistol squat','Jump squat','Plank'];
+const BY_KEY = Object.fromEntries(ALL.concat([HOME_BANDS, ARMS]).map(s => [s.key, s]));
 
 function doneMap() { const m = {}; state.sessions.forEach(s => { if (s.key) m[s.key] = s.date; }); return m; }
 function nextSession() {
@@ -532,8 +544,8 @@ function lastWeightFor(name) {
 function startSession(key) {
   const tpl = key ? BY_KEY[key] : null;
   state.draft = {
-    id: uid(), key: key || null, title: tpl ? tpl.title : 'Free session',
-    phaseName: tpl ? (tpl.home ? 'Home · optional extra' : tpl.phase.name + ' · week ' + tpl.week) : '',
+    id: uid(), key: key || null, title: tpl ? tpl.title : 'Freestyle',
+    phaseName: tpl ? (tpl.home ? 'Home · optional extra' : tpl.extra ? 'Optional extra' : tpl.phase.name + ' · week ' + tpl.week) : 'Freestyle · log anything',
     date: todayISO(), readiness: null, notes: '',
     exercises: tpl ? tpl.ex.map(e => {
       let w = null;
@@ -604,7 +616,10 @@ function renderToday() {
   } else {
     h += `<div class="card"><h2>Program complete 🎉</h2><p class="muted">Time to write the next block. Ask Claude with your new maxes.</p></div>`;
   }
-  h += `<button class="btn secondary" onclick="startSession(null)">Start a free session</button>`;
+  h += `<button class="btn secondary" onclick="startSession(null)">Freestyle: log anything</button>
+    <p class="muted" style="font-size:12px;margin:4px 2px 8px">Park bars, a weekend gym day, whatever you feel like. Add exercises as you go; leave kg empty for bodyweight, reps can be "20s".</p>`;
+  h += `<button class="btn secondary" style="margin-top:8px" onclick="startSession('extra:arms')">Gym: arms (~${estMin(ARMS)} min)</button>
+    <p class="muted" style="font-size:12px;margin:4px 2px 8px">Optional, when you're in Meyrin and feel like it. Doesn't move the program forward.</p>`;
   h += `<button class="btn secondary" style="margin-top:8px" onclick="startSession('home:bands')">Home: glutes + abs (~${estMin(HOME_BANDS)} min)</button>
     <p class="muted" style="font-size:12px;margin:4px 2px 0">Extra glute work on non-gym days, 1–2×/week. Take sets close to failure. Not the day before a heavy squat day.</p>`;
   const lastM = state.measures.length ? state.measures[state.measures.length - 1].date : null;
@@ -668,7 +683,7 @@ function renderDraft() {
   const d = state.draft;
   let h = `<div class="card next">
     ${d.phaseName ? `<span class="pill">${esc(d.phaseName)}</span>` : ''}
-    <h2>${esc(d.title)}</h2>
+    ${d.key ? `<h2>${esc(d.title)}</h2>` : `<div class="field"><label>Name it (optional)</label><input value="${esc(d.title)}" placeholder="e.g. Park: bars" onchange="state.draft.title=this.value.trim()||'Freestyle';save()"></div>`}
     <div class="row" style="margin-top:8px">
       <div class="field"><label>Date</label><input type="date" value="${d.date}" onchange="state.draft.date=this.value;save()"></div>
     </div>
@@ -698,7 +713,7 @@ function renderDraft() {
     </div>`;
   });
   h += `<div class="card"><div class="row"><div class="field"><label>Add exercise</label><input id="new-ex" list="ex-names" placeholder="e.g. Hip thrust"></div></div>
-      <datalist id="ex-names">${[...new Set(ALL.flatMap(s => s.ex.map(e => e.n)))].sort().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+      <datalist id="ex-names">${[...new Set(ALL.concat([HOME_BANDS, ARMS]).flatMap(s => s.ex.map(e => e.n)).concat(EXTRA_NAMES))].sort().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
       <button class="btn secondary" onclick="addExercise()">Add</button></div>
     <div class="field"><label>Notes</label><textarea rows="2" onchange="state.draft.notes=this.value;save()">${esc(d.notes)}</textarea></div>
     <button class="btn" onclick="finishSession()">Finish & save</button>
