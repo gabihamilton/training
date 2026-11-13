@@ -453,12 +453,12 @@ const HOME_BANDS = { key: 'home:bands', home: true, title: 'Home: glutes + abs',
 ]};
 // Optional gym arms day: not part of the queue. Light on shoulders on purpose (already broad); biceps, triceps, forearms.
 const ARMS = { key: 'extra:arms', extra: true, title: 'Gym: arms', phase: { name: 'Extra' }, ex: [
-  { n: 'Chin-up', s: 3, r: '6–8', rpe: '8', note: 'Palms facing you, full hang to chin over the bar. Band-assisted if needed.' },
-  { n: 'Close-grip bench press', s: 3, r: 8, rpe: '8', note: 'Hands shoulder-width, elbows tucked.' },
+  { n: 'Single-arm cable pulldown', s: 3, r: '10–12/arm', rpe: '8', note: 'Half-kneeling, pull elbow down to your ribs. Builds toward pull-ups.' },
+  { n: 'Bench press', s: 3, r: 8, rpe: '8' },
   { n: 'Incline DB curl', s: 3, r: '10–12', rpe: '9', note: 'Bench at ~60°, arms hang straight down. Slow lowering.' },
   { n: 'Cable triceps pushdown', s: 3, r: '12', rpe: '9', note: 'Rope or bar. Elbows pinned to your sides.' },
-  { n: 'Hammer curl', s: 3, r: '12', rpe: '9' },
-  { n: 'Overhead cable triceps extension', s: 3, r: '12', rpe: '9', note: 'Face away from the cable, rope behind the head.' },
+  { n: 'Bayesian cable curl', s: 3, r: '12/arm', rpe: '9', note: 'Low pulley, face away, step forward so the arm stretches behind you. Stop just short of locking out: stretch, don\'t hang on the joint.' },
+  { n: 'Skull crusher', s: 3, r: '10–12', rpe: '9', note: 'EZ bar or DBs, lower behind the head. Or DB overhead extension.' },
   { n: 'Reverse curl', s: 2, r: '15', rpe: '9', note: 'Overhand grip, EZ bar or cable. Forearms.' },
 ]};
 // Exercises suggested in the free session's "Add exercise" list (park bars, bodyweight, etc.)
@@ -511,7 +511,7 @@ function estMin(sess) {
       if (p >= 0.7) t += 6;                                // warm-up sets
     }
     if (n === 'Box jump') work = 0.3;
-    if (/\/(leg|side)/.test(r)) work *= 2;
+    if (/\/(leg|side|arm)/.test(r)) work *= 2;
     t += e.s * (work + rest);
   });
   return Math.round(t / 5) * 5;
