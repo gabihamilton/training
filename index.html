@@ -439,14 +439,17 @@ const PHASES = [
 ];
 PHASES.forEach(ph => ph.sessions.forEach((s, i) => { s.key = ph.id + ':' + i; s.phase = ph; }));
 const ALL = PHASES.flatMap(ph => ph.sessions);
-// Optional home session with bands: not part of the queue, doesn't move the program forward.
-const HOME_BANDS = { key: 'home:bands', home: true, title: 'Home: bands', phase: { name: 'Home' }, ex: [
+// Optional home session (bands + core): not part of the queue, doesn't move the program forward.
+// Key stays 'home:bands' so sessions logged before the rename still match.
+const HOME_BANDS = { key: 'home:bands', home: true, title: 'Home: glutes + abs', phase: { name: 'Home' }, ex: [
   { n: 'Banded glute bridge', s: 3, r: '15–20', note: 'Band above knees, push knees out. Pause 2 s at the top. Last reps should burn.' },
   { n: 'Single-leg glute bridge', s: 3, r: '10–12/leg', note: 'Drive through the heel, hips level.' },
   { n: 'Banded lateral walk', s: 3, r: '12–15/side', note: 'Quarter squat, toes forward, slow steps. Or monster walks.' },
-  { n: 'Banded clamshell', s: 3, r: '15–20/side', note: 'Or side-lying abduction. Slow, hips stacked.' },
-  { n: 'Banded kickback', s: 3, r: '15/leg', note: 'Squeeze the glute at the top, don\'t arch the low back.' },
+  { n: 'Banded kickback', s: 2, r: '15/leg', note: 'Squeeze the glute at the top, don\'t arch the low back.' },
   { n: 'Frog pump', s: 2, r: '25–30', note: 'Soles together, knees out, short fast reps. Go to the burn.' },
+  { n: 'Dead bug', s: 3, r: '8/side', note: 'Low back pressed into the floor the whole time. Slow, exhale as the limbs go out.' },
+  { n: 'Side plank', s: 2, r: '30s/side', note: 'Hips high, body in a straight line. Top leg forward if it\'s too hard.' },
+  { n: 'Hollow hold', s: 3, r: '20–30s', note: 'Low back down, arms overhead. Bend the knees to make it easier.' },
 ]};
 const BY_KEY = Object.fromEntries(ALL.concat([HOME_BANDS]).map(s => [s.key, s]));
 
@@ -471,7 +474,7 @@ function prescText(e) {
 function restMin(e) {
   const n = e.n, r = String(e.r);
   if (n === 'Box jump') return 1;
-  if (/^Banded|^Frog|^Single-leg glute/.test(n)) return 0.75;
+  if (/^Banded|^Frog|^Single-leg glute|^Dead bug|^Side plank|^Hollow/.test(n)) return 0.75;
   if (/m$/.test(r)) return 1.5;
   if (n === 'Back squat' || n === 'Front squat') {
     if (e.s === 1) return 3;
@@ -602,7 +605,7 @@ function renderToday() {
     h += `<div class="card"><h2>Program complete 🎉</h2><p class="muted">Time to write the next block. Ask Claude with your new maxes.</p></div>`;
   }
   h += `<button class="btn secondary" onclick="startSession(null)">Start a free session</button>`;
-  h += `<button class="btn secondary" style="margin-top:8px" onclick="startSession('home:bands')">Home: bands (~${estMin(HOME_BANDS)} min)</button>
+  h += `<button class="btn secondary" style="margin-top:8px" onclick="startSession('home:bands')">Home: glutes + abs (~${estMin(HOME_BANDS)} min)</button>
     <p class="muted" style="font-size:12px;margin:4px 2px 0">Extra glute work on non-gym days, 1–2×/week. Take sets close to failure. Not the day before a heavy squat day.</p>`;
   const lastM = state.measures.length ? state.measures[state.measures.length - 1].date : null;
   const daysSince = lastM ? Math.round((new Date(todayISO()) - new Date(lastM)) / 864e5) : null;
