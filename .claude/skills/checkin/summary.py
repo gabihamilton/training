@@ -14,7 +14,7 @@ LEGS = {'Back squat','Front squat','Bulgarian split squat','Hip thrust','Romania
         'GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat','Banded glute bridge',
         'Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump'}
 MAXES = {'snatch': 'Snatch', 'cj': 'Clean & jerk', 'bs': 'Back squat', 'fs': 'Front squat'}
-PHASE_LEN = {'ramp': 9, 'dec': 15, 'rsr': 18}  # sessions per phase (dec includes optional pump days)
+PHASE_LEN = {'ramp': 9, 'dec': 15, 'size': 15, 'rsr': 18}  # sessions per phase (dec includes optional pump days)
 
 days = 42
 if '--days' in sys.argv: days = int(sys.argv[sys.argv.index('--days') + 1])

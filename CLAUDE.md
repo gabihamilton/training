@@ -20,10 +20,13 @@ sled (push/pull), plyo boxes (box jumps for height), kettlebells, mats.
 ## Program (session queue, not calendar)
 1. **Ramp-up** (3 wks × 3, from Nov 11): RPE-based; week 3 = squat tests that set the working maxes.
 2. **December minimum dose** (5 wks): 2 core sessions + optional legs/glutes pump day; % of working maxes; wk 5 deload.
-3. **Russian Squat Routine** (6 wks × 3, from ~Jan 5): standard table (6×2…6×6 @80%, then 85/90/95/100/105%),
+3. **Leg size block** (5 wks × 3, Jan 5 – Feb 8): hypertrophy before strength. BS 3–5×8–10 / FS 3–4×8 @ 65–70%,
+   accessories at RPE 9; oly lifts light (65%, technique). Week 5 = lighter + squat tests → maxes for RSR.
+4. **Russian Squat Routine** (6 wks × 3, Feb 9 – Mar 22): standard table (6×2…6×6 @80%, then 85/90/95/100/105%),
    built into oly sessions at 70–75%. Easy zone 2 jogs OK (20–30 min, not the day before a big squat day,
    none in weeks 5–6 or when legs ≤2/5). No VO2max during RSR. Chosen over Smolov on purpose.
-4. **Next block**: to be written from real data after the RSR test.
+5. **Next: explosive / peak block** (power, heavier classic lifts, VO2max starts): written from real data after the RSR test.
+Order on purpose: ramp-up → size → strength → power. Upper body only as optional extras (Gym: arms, Freestyle).
 Keep every session ≤ ~85 min estimated (`estMin`), ideally 60–80.
 
 ## The app

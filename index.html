@@ -378,6 +378,45 @@ function decSessions() {
   return out;
 }
 
+// Leg size block (hypertrophy) — 5 weeks x 3. Weeks 1–4 build volume (% of working maxes, accessories
+// close to failure); week 5 = lighter accessories + squat tests that set the maxes for the Russian block.
+function sizeSessions() {
+  const bs = [[3,10,.65],[4,10,.65],[4,8,.70],[5,8,.70]];
+  const fs = [[3,8,.65],[4,8,.65],[4,8,.68],[4,8,.70]];
+  const out = [];
+  for (let w = 0; w < 5; w++) {
+    const t = w === 4, acc = t ? 2 : (w < 2 ? 3 : 4);
+    const test = 'TEST: work up to a heavy single @ RPE 9 (or a triple). Sets the max for the Russian block.';
+    out.push({ week: w + 1, title: t ? 'Snatch + back squat TEST' : 'Snatch + back squat', ex: [
+      { n: 'Box jump', s: 3, r: 2, note: 'For height. Full reset between jumps, step down.' },
+      { n: 'Snatch', s: 5, r: 2, pct: 0.65, of: 'snatch', note: 'Technique. Crisp and fast.' },
+      t ? { n: 'Back squat', s: 1, r: 1, note: test }
+        : { n: 'Back squat', s: bs[w][0], r: bs[w][1], pct: bs[w][2], of: 'bs', note: 'Controlled down, 1–2 reps left in the tank on the last set.' },
+      { n: 'Bulgarian split squat', s: acc, r: '10/leg', rpe: t ? '7' : '9' },
+      { n: 'Hip thrust', s: acc, r: 12, rpe: t ? '7' : '9', note: 'Pause 1s at the top.' },
+      { n: 'GHD sit-up', s: 3, r: 12 },
+    ]});
+    out.push({ week: w + 1, title: 'C&J + hinge', ex: [
+      { n: 'Clean & jerk', s: 5, r: '1+1', pct: 0.65, of: 'cj', note: 'Technique.' },
+      { n: 'Romanian deadlift', s: acc, r: 10, rpe: t ? '7' : '8', note: 'Slow down, big hamstring stretch.' },
+      { n: 'Walking lunge', s: t ? 2 : 3, r: '12/leg', rpe: t ? '7' : '9' },
+      { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: t ? '7' : '9', note: 'Standing, ankle strap.' },
+      { n: 'GHD hip extension', s: 3, r: 15, rpe: t ? '7' : '9' },
+      { n: 'DB calf raise', s: 3, r: 15, note: 'One leg at a time, on a plate. Pause in the stretch.' },
+    ]});
+    out.push({ week: w + 1, title: t ? 'Front squat TEST + glutes' : 'Front squat + glutes', ex: [
+      { n: 'Power clean', s: 5, r: 2, pct: 0.65, of: 'cj', note: 'Fast. Technique, not weight.' },
+      t ? { n: 'Front squat', s: 1, r: 1, note: test.replace(' Sets the max for the Russian block.', '') }
+        : { n: 'Front squat', s: fs[w][0], r: fs[w][1], pct: fs[w][2], of: 'fs' },
+      { n: 'Hip thrust', s: acc, r: 8, rpe: t ? '7' : '9', note: 'Heavy. Pause 1s at the top.' },
+      { n: 'Goblet squat', s: t ? 2 : 3, r: 15, rpe: t ? '7' : '9', note: 'Heels on plates, slow down, no pause at the top.' },
+      { n: 'Cable kickback', s: 2, r: '12/leg', rpe: '9' },
+      { n: 'Sled push', s: t ? 3 : 4, r: '20m', note: 'Finisher. Heavy, steady.' },
+    ]});
+  }
+  return out;
+}
+
 // Russian Squat Routine — 6 weeks x 3, % of back squat max
 const RSR = [
   [[6,2,.80],[6,3,.80],[6,2,.80]],
@@ -432,10 +471,12 @@ const PHASES = [
   // CERN gym: barbell, dumbbells, bench, pull-up bar and cables. No leg machines.
   { id: 'dec', name: 'December: minimum dose', when: 'Dec 1 – Jan 4 · shoes arrive', sessions: decSessions(),
     desc: '<b>Two sessions a week is a full win</b>; the legs & glutes pump day is a bonus. About 45 min each. Weights are % of your working maxes, so update those in Settings after the ramp-up tests. Week 5 is lighter for the holidays.' },
-  { id: 'rsr', name: 'Russian squat block', when: '6 weeks from ~Jan 5', sessions: rsrSessions(),
+  { id: 'size', name: 'Leg size block', when: 'Jan 5 – Feb 8 · 5 weeks', sessions: sizeSessions(),
+    desc: '<b>Size first, then strength.</b> Squats at 65–70% for sets of 8–10, plus lots of split squats, RDLs, hip thrusts and lunges taken <b>close to failure</b> (RPE 9 = 1 rep left). Volume climbs from week 1 to 4. The snatch and C&J stay light, for technique. <b>Week 5</b> is lighter with the <b>squat tests</b>: update your back and front squat maxes in Settings afterwards, they set the Russian block. Cardio: bike commutes and easy zone 2 jogs, not the day before a squat day. No VO2max yet.' },
+  { id: 'rsr', name: 'Russian squat block', when: 'Feb 9 – Mar 22 · 6 weeks', sessions: rsrSessions(),
     desc: 'The <b>Russian Squat Routine</b> (3×/week at 80%, with volume building to 6×6, then intensity up to a <b>105% attempt</b>), built into your oly sessions. The snatch and C&J stay moderate (70–75%) so the squats get the recovery. Cardio here: bike commutes, plus <b>very easy zone 2 jogs are fine</b>: 20–30 min, conversational, flat. Put them on rest days or after a lifting session, never the day before a big squat day, and drop them in weeks 5–6 (heavy singles) or if your legs score ≤2/5. Hold off on VO2max intervals until this block is over.' },
-  { id: 'next', name: 'Next: oly strength block', when: 'after the RSR test', sessions: [],
-    desc: 'Written once we see your new squat max, with front squat emphasis and heavier classic lifts. This is also when the weekly VO2max session comes in.' },
+  { id: 'next', name: 'Next: explosive / peak block', when: 'after the RSR test (late March)', sessions: [],
+    desc: 'Ramp-up → size → strength → <b>power</b>. Written once we see your new squat max: heavier snatch and C&J, jumps and speed work to turn the new strength into explosiveness. This is also when the weekly VO2max session comes in.' },
 ];
 PHASES.forEach(ph => ph.sessions.forEach((s, i) => { s.key = ph.id + ':' + i; s.phase = ph; }));
 const ALL = PHASES.flatMap(ph => ph.sessions);
