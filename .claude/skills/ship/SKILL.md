@@ -9,7 +9,8 @@ Everything is in `index.html` (~1000 lines). Don't read it all; grep for what yo
 
 ## Map (grep these names)
 - **Program templates:** `ghdSitup`, `rampSessions`, `decSessions` (`pcts`), `RSR` table + `rsrSessions`,
-  `PHASES` (name, when, desc, sessions), `HOME_BANDS` (optional, not in the queue).
+  `sizeSessions`, `PHASES` (name, when, desc, sessions), `HOME_BANDS` + `ARMS` (optional extras, not in the queue),
+  `EXTRA_NAMES` (Freestyle suggestions). A 'Band warm-up' is prepended to every squat day right after `PHASES`.
   Exercise object: `{ n: name, s: sets, r: reps (number or '8/leg', '1+1', '20m'), rpe?, pct? + of: 'bs'|'fs'|'snatch'|'cj', note? }`.
   Session keys are `phase:index`; **reordering or inserting sessions in a phase shifts the keys of later
   sessions**, which changes which ones count as done. Append, or check logged keys first (`/checkin`).

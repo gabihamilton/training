@@ -10,7 +10,21 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
   snatch 61, C&J 70, BS 97.5, FS 83 kg; to be reset from the week-3 ramp-up squat tests.
 - Cardio: bike commutes to CERN (zone 2) a couple of times a week; VO2max work comes later.
 - Lifting shoes arrive end of November; December is chaotic (minimum-dose phase).
-- Home: resistance bands (optional "Home: bands" session).
+- Build: already broad shoulders / big upper body, thin legs → upper body only as optional extras.
+- Hyperlax elbows: prefer stretch-position arm work that doesn't hang on the joint (e.g. Bayesian cable curl).
+- Weak at pull-ups (~4 max) → single-arm cable pulldowns instead.
+- **Favourites:** single-leg RDL with the back foot up (great for glutes), GHD sit-ups, bench press,
+  incline DB curl, cable pushdown. Use them when choosing exercises.
+- Soreness shows up in quads/hamstrings, rarely glutes; don't judge glute work by soreness.
+- Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every squat day.
+
+## Schedule & logistics
+- Gym is at CERN Meyrin. Car days (roommate, 8:50–17:30): lift ~9:00 or ~14:00. Bike (~30 min each way,
+  zone 2) only when dry. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
+- Default: 3 weekday lifts (≥1 rest day between squat days); weekends optional (travel, visitors).
+  The queue is flexible: any session can be started from Program → "do this".
+- No front squat the day after B (RDL/lunges); no two squat days in a row; ≥3 days before a squat test.
+- Weekday runs are impractical; zone 2 = bike commutes + weekend runs/walks.
 
 ## CERN gym equipment
 Barbells, plates, rig, dumbbells, benches, **cables**, **GHD** (loves GHD sit-ups; one cushion is flat),
@@ -18,6 +32,8 @@ sled (push/pull), plyo boxes (box jumps for height), kettlebells, mats.
 **No leg machines** (no leg press, leg curl machine, calf machine, back extension).
 
 ## Program (session queue, not calendar)
+Optional extras outside the queue: **Home: glutes + abs** (`home:bands`), **Gym: arms** (`extra:arms`),
+**Freestyle** (free session, nameable, e.g. park bars).
 1. **Ramp-up** (3 wks × 3, from Nov 11): RPE-based; week 3 = squat tests that set the working maxes.
 2. **December minimum dose** (5 wks): 2 core sessions + optional legs/glutes pump day; % of working maxes; wk 5 deload.
 3. **Leg size block** (5 wks × 3, Jan 5 – Feb 8): hypertrophy before strength. BS 3–5×8–10 / FS 3–4×8 @ 65–70%,

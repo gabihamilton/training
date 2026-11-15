@@ -10,7 +10,7 @@ from datetime import date, timedelta
 URL = "https://mghqfyjckbzhyefpzkaq.supabase.co/rest/v1/training_items?select=id,kind,date,data&deleted=eq.false&order=date"
 KEY = "sb_publishable_BVJz5Rcer9rJlP-AcVPp0A_n0-UAK6z"
 LEGS = {'Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift','Walking lunge','Goblet squat',
-        'Single-leg DB RDL','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback',
+        'Single-leg DB RDL','Single-leg RDL (back foot up)','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback',
         'GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat','Banded glute bridge',
         'Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump'}
 MAXES = {'snatch': 'Snatch', 'cj': 'Clean & jerk', 'bs': 'Back squat', 'fs': 'Front squat'}
