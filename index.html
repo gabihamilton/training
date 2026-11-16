@@ -59,6 +59,7 @@
   .ex-name { font-weight: 600; font-size: 15px; }
   .ex-target { font-size: 12px; color: var(--ink-soft); text-align: right; }
   .ex-note { font-size: 12px; color: var(--warm); margin: -2px 0 6px; }
+  .ex-hint { font-size: 12px; color: var(--ink-soft); margin: -2px 0 6px; }
   .set-row { display: grid; grid-template-columns: 28px 1fr 1fr 40px; gap: 8px; align-items: center; padding: 4px 0; }
   .set-row .n { font-size: 12px; color: var(--ink-soft); text-align: center; }
   .set-row input, .field input, .field select, .field textarea, select.inline {
@@ -585,6 +586,38 @@ function lastWeightFor(name) {
   return null;
 }
 
+// Last time this exercise was done: top weight, logged RPE, and whether any sets were left undone.
+function lastPerfFor(name) {
+  for (let i = state.sessions.length - 1; i >= 0; i--) {
+    const ex = state.sessions[i].exercises.find(e => e.name === name);
+    if (!ex) continue;
+    const done = ex.sets.filter(s => s.done && s.w);
+    if (!done.length) continue;
+    return { w: Math.max(...done.map(s => s.w)), rpe: parseFloat(ex.rpe) || null, missed: ex.sets.some(s => !s.done) };
+  }
+  return null;
+}
+// Suggest today's weight from last time vs this session's target RPE.
+// Big lower-body lifts: +5 kg if last RPE was ≥1 below target, +2.5 if at/just below. Oly lifts and
+// accessories: +2.5 only if ≥1 below. Above target or sets left undone: hold.
+const BIG_LIFTS = new Set(['Back squat','Front squat','Pause back squat','Romanian deadlift','Hip thrust','Snatch pull','Clean pull','Good morning']);
+function suggestW(e) {
+  const p = lastPerfFor(e.n);
+  if (!p || e.n === 'Box jump') return { w: p ? p.w : null, hint: '' };
+  const last = 'Last: ' + fmt(p.w) + ' ' + U() + (p.rpe ? ' @ RPE ' + p.rpe : '');
+  const target = parseFloat(e.rpe);
+  if (!target || !p.rpe || e.s === 1) return { w: p.w, hint: last };
+  const diff = target - p.rpe, big = BIG_LIFTS.has(e.n);
+  let inc = 0, why = '';
+  if (p.missed) why = 'sets left undone, hold';
+  else if (diff < 0) why = 'above target, hold';
+  else if (diff >= 1) inc = big ? 5 : 2.5;
+  else inc = big ? 2.5 : 0;
+  const w = toKg(roundDisp(toDisp(p.w + inc)));
+  const step = w - p.w;
+  return { w, hint: last + ' → ' + (why || (step > 0 ? '+' + fmt(step) + ' ' + U() : 'same weight')) };
+}
+
 /* ============================================================
    Session drafting / logging
    ============================================================ */
@@ -595,10 +628,10 @@ function startSession(key) {
     phaseName: tpl ? (tpl.home ? 'Home · optional extra' : tpl.extra ? 'Optional extra' : tpl.phase.name + ' · week ' + tpl.week) : 'Freestyle · log anything',
     date: todayISO(), readiness: null, notes: '',
     exercises: tpl ? tpl.ex.map(e => {
-      let w = null;
+      let w = null, hint = '';
       if (e.pct && state.settings.maxes[e.of]) w = toKg(roundDisp(toDisp(e.pct * state.settings.maxes[e.of])));
-      else w = lastWeightFor(e.n);
-      return { name: e.n, target: prescText(e), note: e.note || '', rpe: '', rest: Math.round(restMin(e) * 4) * 15,
+      else ({ w, hint } = suggestW(e));
+      return { name: e.n, target: prescText(e), note: e.note || '', hint, rpe: '', rest: Math.round(restMin(e) * 4) * 15,
         sets: Array.from({ length: e.s }, () => ({ w, r: String(e.r), done: false })) };
     }) : [],
   };
@@ -743,6 +776,7 @@ function renderDraft() {
     h += `<div class="exercise${complete ? ' complete' : ''}">
       <div class="ex-head"><span class="ex-name">${esc(e.name)}</span><span class="ex-target">${esc(e.target || '')}${e.target ? '<br>' : ''}rest ${restLabel(e.rest || 90)}</span></div>
       ${e.note ? `<div class="ex-note">${esc(e.note)}</div>` : ''}
+      ${e.hint ? `<div class="ex-hint">${esc(e.hint)}</div>` : ''}
       <div class="set-row"><span></span><span class="unit">${U()}</span><span class="unit">reps</span><span></span></div>
       ${e.sets.map((s, j) => `<div class="set-row">
           <span class="n">${j + 1}</span>
