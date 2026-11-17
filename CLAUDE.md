@@ -16,7 +16,7 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - **Favourites:** single-leg RDL with the back foot up (great for glutes), GHD sit-ups, bench press,
   incline DB curl, cable pushdown. Use them when choosing exercises.
 - Soreness shows up in quads/hamstrings, rarely glutes; don't judge glute work by soreness.
-- Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every squat day.
+- Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every lower-body day (squat and hinge days).
 
 ## Schedule & logistics
 - Gym is at CERN Meyrin. Car days (roommate, 8:50–17:30): lift ~9:00 or ~14:00. Bike (~30 min each way,

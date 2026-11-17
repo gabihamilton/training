@@ -481,9 +481,9 @@ const PHASES = [
     desc: 'Ramp-up → size → strength → <b>power</b>. Written once we see your new squat max: heavier snatch and C&J, jumps and speed work to turn the new strength into explosiveness. This is also when the weekly VO2max session comes in.' },
 ];
 PHASES.forEach(ph => ph.sessions.forEach((s, i) => { s.key = ph.id + ':' + i; s.phase = ph; }));
-// Glute activation before every squat day (light rubber or fabric band).
+// Glute activation before every lower-body day: squats and hinges (light rubber or fabric band).
 for (const ph of PHASES) for (const s of ph.sessions)
-  if (s.ex.some(e => e.n === 'Back squat' || e.n === 'Front squat'))
+  if (s.ex.some(e => LEGS.has(e.n)))
     s.ex.unshift({ n: 'Band warm-up', s: 1, r: '~4 min', note: 'Before the barbell: banded glute bridge 2×15 (pause at the top) + lateral walk 2×12/side. Light band, just wake the glutes up.' });
 const ALL = PHASES.flatMap(ph => ph.sessions);
 // Optional home session (bands + core): not part of the queue, doesn't move the program forward.
