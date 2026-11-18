@@ -90,7 +90,7 @@ for k in sorted(weeks)[-8:]:
 cardio = [c for c in sorted(by['cardio'], key=lambda c: c['date']) if c['date'] >= since]
 if cardio:
     print("\n## Cardio")
-    for c in cardio: print(f"  {c['date']} {c['type']} {c.get('min')} min" + (f" {c.get('mi') or c.get('km')} mi" if (c.get('mi') or c.get('km')) else '') + (f" — {c['notes']}" if c.get('notes') else ''))
+    for c in cardio: print(f"  {c['date']} {c['type']} {c.get('min')} min" + (f" {c.get('mi') or round(c['km'] / 1.609344, 2)} mi" if (c.get('mi') or c.get('km')) else '') + (f" — {c['notes']}" if c.get('notes') else ''))
 
 ms = sorted(by['measure'], key=lambda m: m['date'])
 if ms:

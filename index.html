@@ -159,7 +159,7 @@ function defaultState() {
       maxes: { snatch: 61, cj: 70, bs: 97.5, fs: 83 },
     },
     sessions: [],   // {id, date, key, title, readiness, notes, exercises:[{name, rpe, note, sets:[{w(kg), r, done}]}]}
-    cardio: [],     // {id, date, type, min, mi, notes} — distance in miles (Apple Watch). Older entries have `km`, which also held the watch's miles.
+    cardio: [],     // {id, date, type, min, mi, notes} — distance in miles (Apple Watch). Older entries have `km` (real km), converted for display by cardioMi().
     measures: [],   // {id, date, waist, hips, thighL, thighR, calf, bicep, forearm, notes} in cm
     skipped: [],    // program keys
     draft: null,
@@ -201,6 +201,8 @@ const TABLE = SUPABASE_URL + '/rest/v1/training_items';
 const HDR = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
 let syncing = false, syncTimer = null;
 function scheduleSync() { clearTimeout(syncTimer); syncTimer = setTimeout(syncAll, 800); }
+
+function cardioMi(c) { return c.mi || (c.km ? Math.round(c.km / 1.609344 * 100) / 100 : null); }
 
 function localItems() {
   const m = {};
@@ -751,7 +753,7 @@ function renderToday() {
           <button class="link-btn danger" onclick="delSession('${s.id}')">Delete</button></div></details>`;
     } else {
       const c = it.c, lbl = { bike: '🚲 Bike to CERN', z2: 'Zone 2', vo2: 'VO2max' }[c.type] || c.type;
-      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${(c.mi ?? c.km) ? ' · ' + (c.mi ?? c.km) + ' mi' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
+      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${cardioMi(c) ? ' · ' + cardioMi(c) + ' mi' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
         <button class="link-btn danger" onclick="delCardio('${c.id}')">✕</button></div>`;
     }
   });
