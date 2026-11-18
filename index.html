@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="app-version" content="2026-11-19.1">
 <title>Training log</title>
 <style>
   :root {
@@ -1126,7 +1127,26 @@ function render() {
 document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; render(); window.scrollTo(0, 0); }));
 render();
 syncAll();
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncAll(); });
+// Auto-update: the phone keeps a cached copy of the page, so on open/resume fetch the live page,
+// compare its app-version meta with ours, and reload once if it changed (logs live in localStorage, so it's safe).
+const APP_VERSION = document.querySelector('meta[name="app-version"]').content;
+let lastUpdateCheck = 0;
+async function checkUpdate() {
+  if (Date.now() - lastUpdateCheck < 60e3) return;
+  lastUpdateCheck = Date.now();
+  try {
+    const txt = await (await fetch(location.pathname + '?v=' + Date.now(), { cache: 'no-store' })).text();
+    const live = (txt.match(/name="app-version" content="([^"]+)"/) || [])[1];
+    if (!live || live === APP_VERSION) return;
+    let tried = null; try { tried = sessionStorage.getItem('updateTried'); } catch (e) {}
+    if (tried === live) return;                                  // already tried once; don't loop
+    try { sessionStorage.setItem('updateTried', live); } catch (e) {}
+    await fetch(location.href, { cache: 'reload' }).catch(() => {}); // refresh the cached copy
+    location.reload();
+  } catch (e) { /* offline: keep the current version */ }
+}
+checkUpdate();
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { syncAll(); checkUpdate(); } });
 </script>
 </body>
 </html>

@@ -33,6 +33,8 @@ Everything is in `index.html` (~1000 lines). Don't read it all; grep for what yo
 4. `pkill -f "http.server 8765"` when done.
 
 ## Ship
+0. **Bump `<meta name="app-version">`** in `index.html` (e.g. `2026-11-19.2`) on every change, or phones keep
+   the cached copy (the app reloads itself when the live version differs).
 1. Commit with a clear message (+ Co-Authored-By line).
 2. **Ask the user before pushing.** On yes: `git push origin main`, wait ~45 s, then
    `curl -s https://gabihamilton.github.io/training/ | grep -c '<something new>'` to confirm it's live.
