@@ -8,7 +8,8 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - **Goal: huge legs and glutes.** Squats have always been the weak point. Rarely sore; Ganbaru felt easy.
 - Best lifts (old): snatch 135 lb, C&J ~155 lb, back squat 215 lb. Working maxes in the app start at
   snatch 61, C&J 70, BS 97.5, FS 83 kg; to be reset from the week-3 ramp-up squat tests.
-- Cardio: bike commutes to CERN (zone 2) a couple of times a week; VO2max work comes later.
+- Cardio: daily bike commute to CERN (zone 2, ~5 h/week from Nov 18); VO2max work comes after the RSR.
+- Nov 17: blood donation refused for low red cell count (period coming) → suggested checking ferritin/iron with a doctor.
 - Lifting shoes arrive end of November; December is chaotic (minimum-dose phase).
 - Build: already broad shoulders / big upper body, thin legs → upper body only as optional extras.
 - Hyperlax elbows: prefer stretch-position arm work that doesn't hang on the joint (e.g. Bayesian cable curl).
@@ -19,8 +20,8 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every lower-body day (squat and hinge days).
 
 ## Schedule & logistics
-- Gym is at CERN Meyrin. Car days (roommate, 8:50–17:30): lift ~9:00 or ~14:00. Bike (~30 min each way,
-  zone 2) only when dry. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
+- Gym is at CERN Meyrin. **From Nov 18 the plan is to bike there every day** (~30 min each way = ~60 min zone 2/day;
+  needs rain gear). Car (roommate, 8:50–17:30) is the fallback: lift ~9:00 or ~14:00. Gym platform is booked; 14:00 is quiet. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
 - Default: 3 weekday lifts (≥1 rest day between squat days); weekends optional (travel, visitors).
   The queue is flexible: any session can be started from Program → "do this".
 - No front squat the day after B (RDL/lunges); no two squat days in a row; ≥3 days before a squat test.
