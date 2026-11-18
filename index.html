@@ -159,7 +159,7 @@ function defaultState() {
       maxes: { snatch: 61, cj: 70, bs: 97.5, fs: 83 },
     },
     sessions: [],   // {id, date, key, title, readiness, notes, exercises:[{name, rpe, note, sets:[{w(kg), r, done}]}]}
-    cardio: [],     // {id, date, type, min, km, notes}
+    cardio: [],     // {id, date, type, min, mi, notes} — distance in miles (Apple Watch). Older entries have `km`, which also held the watch's miles.
     measures: [],   // {id, date, waist, hips, thighL, thighR, calf, bicep, forearm, notes} in cm
     skipped: [],    // program keys
     draft: null,
@@ -716,7 +716,7 @@ function renderToday() {
     </div>
     <div class="row" style="margin-top:10px">
       <div class="field"><label>Minutes</label><input id="c-min" type="number" inputmode="numeric" value="${cardioType === 'bike' ? 30 : ''}"></div>
-      <div class="field"><label>km (optional)</label><input id="c-km" type="number" inputmode="decimal" step="0.1"></div>
+      <div class="field"><label>Miles (optional)</label><input id="c-mi" type="number" inputmode="decimal" step="0.1"></div>
       <div class="field"><label>Date</label><input id="c-date" type="date" value="${todayISO()}"></div>
     </div>
     <div class="field"><label>Notes</label><input id="c-notes" placeholder="${cardioType === 'vo2' ? 'e.g. 5×3 min hard / 3 min easy' : ''}"></div>
@@ -751,7 +751,7 @@ function renderToday() {
           <button class="link-btn danger" onclick="delSession('${s.id}')">Delete</button></div></details>`;
     } else {
       const c = it.c, lbl = { bike: '🚲 Bike to CERN', z2: 'Zone 2', vo2: 'VO2max' }[c.type] || c.type;
-      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${c.km ? ' · ' + c.km + ' km' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
+      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${(c.mi ?? c.km) ? ' · ' + (c.mi ?? c.km) + ' mi' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
         <button class="link-btn danger" onclick="delCardio('${c.id}')">✕</button></div>`;
     }
   });
@@ -876,7 +876,7 @@ function delSession(id) { if (!confirm('Delete this session?')) return; state.se
 function delCardio(id) { state.cardio = state.cardio.filter(c => c.id !== id); state.deleted[id] = Date.now(); save(); scheduleSync(); render(); }
 function addCardio() {
   const min = parseFloat($('#c-min').value); if (!min) { toast('Add the minutes'); return; }
-  state.cardio.push({ _ts: Date.now(), id: uid(), date: $('#c-date').value || todayISO(), type: cardioType, min, km: parseFloat($('#c-km').value) || null, notes: $('#c-notes').value.trim() });
+  state.cardio.push({ _ts: Date.now(), id: uid(), date: $('#c-date').value || todayISO(), type: cardioType, min, mi: parseFloat($('#c-mi').value) || null, notes: $('#c-notes').value.trim() });
   save(); scheduleSync(); toast('Cardio saved'); render();
 }
 
