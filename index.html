@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-version" content="2026-11-25.1">
+<meta name="app-version" content="2026-11-25.2">
 <title>Training log</title>
 <style>
   :root {
@@ -303,7 +303,8 @@ const MAX_NAMES = { snatch: 'Snatch', cj: 'Clean & jerk', bs: 'Back squat', fs: 
    ============================================================ */
 const LEGS = new Set(['Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift',
   'Banded glute bridge','Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump',
-  'Walking lunge','Goblet squat','Single-leg DB RDL','Single-leg RDL (back foot up)','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat']);
+  'Walking lunge','Goblet squat','Single-leg DB RDL','Single-leg RDL (back foot up)','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat',
+  'Jump squat','Single-leg hip thrust','Cossack squat']);
 
 // GHD sit-ups: start conservative, they can make abs very sore at first
 function ghdSitup(week0) {
@@ -513,9 +514,32 @@ const ARMS = { key: 'extra:arms', extra: true, title: 'Gym: arms', phase: { name
   { n: 'Skull crusher', s: 3, r: '10–12', rpe: '9', note: 'EZ bar or DBs, lower behind the head. Or DB overhead extension.' },
   { n: 'Reverse curl', s: 2, r: '15', rpe: '9', note: 'Overhand grip, EZ bar or cable. Forearms.' },
 ]};
+// Optional travel days (hotel room / Airbnb): bodyweight + light bands only. Not part of the queue.
+const HOTEL_LEGS = { key: 'travel:legs', travel: true, title: 'Travel: legs + glutes', phase: { name: 'Travel' }, ex: [
+  { n: 'Banded glute bridge', s: 2, r: 20, note: 'Warm-up. Band above knees, pause 2 s at the top.' },
+  { n: 'Overhead squat (towel)', s: 3, r: 8, note: 'Towel or broomstick pulled wide overhead. Slow, sit deep, chest up: keeps the snatch position alive.' },
+  { n: 'Jump squat', s: 4, r: 5, note: 'Max height, land soft and quiet, reset between reps.' },
+  { n: 'Bulgarian split squat', s: 4, r: '12–15/leg', note: 'Back foot on the bed or a chair. 3 s down, no bounce. Hold a backpack when 15 is easy.' },
+  { n: 'Single-leg hip thrust', s: 3, r: '12–15/leg', note: 'Shoulders on the bed edge, other knee pulled in. Pause 2 s at the top.' },
+  { n: 'Single-leg RDL (back foot up)', s: 3, r: '12/leg', note: 'Back foot on the bed. Hold a suitcase or backpack. Slow, feel the glute stretch.' },
+  { n: 'Banded lateral walk', s: 3, r: '15/side', note: 'Quarter squat, toes forward, slow steps.' },
+  { n: 'Cossack squat', s: 2, r: '8/side', note: 'Wide stance, sit into one hip, other leg straight. Hold the bed for balance.' },
+  { n: 'Frog pump', s: 2, r: '30', note: 'Band above knees. Go to the burn.' },
+]};
+const HOTEL_UPPER = { key: 'travel:upper', travel: true, title: 'Travel: upper + core', phase: { name: 'Travel' }, ex: [
+  { n: 'Push-up', s: 4, r: 'max−2', note: 'Pause 1 s with the chest just above the floor (bench-meet pause). Feet on the bed when it gets easy.' },
+  { n: 'Band row', s: 4, r: 15, note: 'Band around a bed leg or shut in the door. Squeeze shoulder blades together.' },
+  { n: 'Pike push-up', s: 3, r: 8, note: 'Hips high, head between the hands.' },
+  { n: 'Band pull-apart', s: 3, r: 20, note: 'Straight arms, band to the chest.' },
+  { n: 'Chair dip', s: 3, r: '10–12', note: 'Hands on a chair or bed edge, knees bent. Stop short of locking the elbows.' },
+  { n: 'Band curl', s: 3, r: 15, note: 'Stand on the band. Stop just short of lockout at the bottom.' },
+  { n: 'Dead bug', s: 3, r: '8/side', note: 'Low back pressed into the floor.' },
+  { n: 'Hollow hold', s: 3, r: '20–30s', note: 'Bend the knees to make it easier.' },
+  { n: 'Side plank', s: 2, r: '30s/side' },
+]};
 // Exercises suggested in the free session's "Add exercise" list (park bars, bodyweight, etc.)
 const EXTRA_NAMES = ['Dip','Pull-up','Australian pull-up','L-sit','Push-up','Hanging knee raise','Pistol squat','Jump squat','Plank'];
-const BY_KEY = Object.fromEntries(ALL.concat([HOME_BANDS, ARMS]).map(s => [s.key, s]));
+const BY_KEY = Object.fromEntries(ALL.concat([HOME_BANDS, ARMS, HOTEL_LEGS, HOTEL_UPPER]).map(s => [s.key, s]));
 
 function doneMap() { const m = {}; state.sessions.forEach(s => { if (s.key) m[s.key] = s.date; }); return m; }
 function nextSession() {
@@ -538,7 +562,7 @@ function prescText(e) {
 function restMin(e) {
   const n = e.n, r = String(e.r);
   if (n === 'Box jump') return 1;
-  if (/^Band|^Frog|^Single-leg glute|^Dead bug|^Side plank|^Hollow/.test(n)) return 0.75;
+  if (/^Band|^Frog|^Single-leg glute|^Dead bug|^Side plank|^Hollow|^Pike|^Chair|^Cossack|^Overhead squat \(towel/.test(n)) return 0.75;
   if (/m$/.test(r)) return 1.5;
   if (n === 'Back squat' || n === 'Front squat') {
     if (e.s === 1) return 3;
@@ -630,12 +654,12 @@ function startSession(key) {
   const tpl = key ? BY_KEY[key] : null;
   state.draft = {
     id: uid(), key: key || null, title: tpl ? tpl.title : 'Freestyle',
-    phaseName: tpl ? (tpl.home ? 'Home · optional extra' : tpl.extra ? 'Optional extra' : tpl.phase.name + ' · week ' + tpl.week) : 'Freestyle · log anything',
+    phaseName: tpl ? (tpl.home ? 'Home · optional extra' : tpl.travel ? 'Travel · optional extra' : tpl.extra ? 'Optional extra' : tpl.phase.name + ' · week ' + tpl.week) : 'Freestyle · log anything',
     date: todayISO(), readiness: null, notes: '',
     exercises: tpl ? tpl.ex.map(e => {
       let w = null, hint = '';
       if (e.pct && state.settings.maxes[e.of]) w = toKg(roundDisp(toDisp(e.pct * state.settings.maxes[e.of])));
-      else ({ w, hint } = suggestW(e));
+      else if (!tpl.travel) ({ w, hint } = suggestW(e));
       return { name: e.n, target: prescText(e), note: e.note || '', hint, rpe: '', rest: Math.round(restMin(e) * 4) * 15,
         sets: Array.from({ length: e.s }, () => ({ w, r: String(e.r), done: false })) };
     }) : [],
@@ -707,6 +731,9 @@ function renderToday() {
     <p class="muted" style="font-size:12px;margin:4px 2px 8px">Optional, when you're in Meyrin and feel like it. Doesn't move the program forward.</p>`;
   h += `<button class="btn secondary" style="margin-top:8px" onclick="startSession('home:bands')">Home: glutes + abs (~${estMin(HOME_BANDS)} min)</button>
     <p class="muted" style="font-size:12px;margin:4px 2px 0">Extra glute work on non-gym days, 1–2×/week. Take sets close to failure. Not the day before a heavy squat day.</p>`;
+  h += `<div class="row" style="margin-top:8px;gap:8px;align-items:center"><button class="btn secondary" style="margin:0" onclick="startSession('travel:legs')">Travel: legs</button>
+    <button class="btn secondary" style="margin:0" onclick="startSession('travel:upper')">Travel: upper</button></div>
+    <p class="muted" style="font-size:12px;margin:4px 2px 0">Hotel room, bodyweight + bands (~${estMin(HOTEL_LEGS)} / ~${estMin(HOTEL_UPPER)} min). Away from the gym: alternate them, 3–4×/week.</p>`;
   const lastM = state.measures.length ? state.measures[state.measures.length - 1].date : null;
   const daysSince = lastM ? Math.round((new Date(todayISO()) - new Date(lastM)) / 864e5) : null;
   if (!lastM || daysSince >= 28) h += `<div class="card" style="margin-top:12px"><span class="pill warm">Monthly</span>
@@ -800,7 +827,7 @@ function renderDraft() {
     </div>`;
   });
   h += `<div class="card"><div class="row"><div class="field"><label>Add exercise</label><input id="new-ex" list="ex-names" placeholder="e.g. Hip thrust"></div></div>
-      <datalist id="ex-names">${[...new Set(ALL.concat([HOME_BANDS, ARMS]).flatMap(s => s.ex.map(e => e.n)).concat(EXTRA_NAMES))].sort().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
+      <datalist id="ex-names">${[...new Set(ALL.concat([HOME_BANDS, ARMS, HOTEL_LEGS, HOTEL_UPPER]).flatMap(s => s.ex.map(e => e.n)).concat(EXTRA_NAMES))].sort().map(n => `<option value="${esc(n)}">`).join('')}</datalist>
       <button class="btn secondary" onclick="addExercise()">Add</button></div>
     <div class="field"><label>Notes</label><textarea rows="2" onchange="state.draft.notes=this.value;save()">${esc(d.notes)}</textarea></div>
     <button class="btn" onclick="finishSession()">Finish & save</button>

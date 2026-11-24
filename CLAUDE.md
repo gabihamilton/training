@@ -5,13 +5,17 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 
 ## The athlete
 - 32, returning to Olympic weightlifting 3×/week, sessions up to **1.5 h**, any day incl. weekends.
-- **Goal: huge legs and glutes.** Squats have always been the weak point. Rarely sore; Ganbaru felt easy.
+- **Priorities (Nov 25):** 1) weightlifting (what makes the user happy; loves being in the gym), 2) huge glutes/legs,
+  3) squat, 4) **bench**: informal CERN bench meet (IPF rules → paused bench), probably **May** (date TBC).
+  Squats have always been the weak point. Rarely sore; Ganbaru felt easy.
+- Bench history: 50 kg×8, 57 kg×2 at Fermilab; long ago 61 kg×1, then 61 kg×4 a year later. Detrained now.
 - Best lifts (old): snatch 135 lb, C&J ~155 lb, back squat 215 lb. Working maxes in the app start at
   snatch 61, C&J 70, BS 97.5, FS 83 kg; to be reset from the week-3 ramp-up squat tests.
 - Cardio: daily bike commute to CERN (zone 2, ~5 h/week from Nov 18); VO2max work comes after the RSR.
 - Nov 17: blood donation refused for low red cell count (period coming) → suggested checking ferritin/iron with a doctor.
-- Lifting shoes arrive end of November; December is chaotic (minimum-dose phase).
-- Build: already broad shoulders / big upper body, thin legs → upper body only as optional extras.
+- Lifting shoes arrive end of November. December is chaotic: **away Dec 2–9 and Dec 19 – ~Jan 4**
+  (travel sessions: `travel:legs`, `travel:upper`); gym only ~Dec 10–18.
+- Build: already broad shoulders / big upper body, thin legs → upper body stays small, except bench (meet).
 - Hyperlax elbows: prefer stretch-position arm work that doesn't hang on the joint (e.g. Bayesian cable curl).
 - Weak at pull-ups (~4 max) → single-arm cable pulldowns instead.
 - **Favourites:** single-leg RDL with the back foot up (great for glutes), GHD sit-ups, bench press,
@@ -22,7 +26,9 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 ## Schedule & logistics
 - Gym is at CERN Meyrin. **From Nov 18 the plan is to bike there every day** (~30 min each way = ~60 min zone 2/day;
   needs rain gear). Car (roommate, 8:50–17:30) is the fallback: lift ~9:00 or ~14:00. Gym platform is booked; 14:00 is quiet. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
-- Default: 3 weekday lifts (≥1 rest day between squat days); weekends optional (travel, visitors).
+- Now: 3–4 lifts/week; did B and C on back-to-back days by choice (Nov 23–24). **From January: 5 days/week**
+  (+ optional weekend): heavy leg days alternate with bench/glute days, never two hard leg days in a row.
+  Weekends optional (travel, visitors).
   The queue is flexible: any session can be started from Program → "do this".
 - No front squat the day after B (RDL/lunges); no two squat days in a row; ≥3 days before a squat test.
 - Weekday runs are impractical; zone 2 = bike commutes + weekend runs/walks.
@@ -34,6 +40,7 @@ sled (push/pull), plyo boxes (box jumps for height), kettlebells, mats.
 
 ## Program (session queue, not calendar)
 Optional extras outside the queue: **Home: glutes + abs** (`home:bands`), **Gym: arms** (`extra:arms`),
+**Travel: legs + glutes / upper + core** (`travel:legs`, `travel:upper`; bodyweight + bands, no weight hints),
 **Freestyle** (free session, nameable, e.g. park bars).
 1. **Ramp-up** (3 wks × 3, from Nov 11): RPE-based; week 3 = squat tests that set the working maxes.
 2. **December minimum dose** (5 wks): 2 core sessions + optional legs/glutes pump day; % of working maxes; wk 5 deload.
@@ -42,8 +49,12 @@ Optional extras outside the queue: **Home: glutes + abs** (`home:bands`), **Gym:
 4. **Russian Squat Routine** (6 wks × 3, Feb 9 – Mar 22): standard table (6×2…6×6 @80%, then 85/90/95/100/105%),
    built into oly sessions at 70–75%. Easy zone 2 jogs OK (20–30 min, not the day before a big squat day,
    none in weeks 5–6 or when legs ≤2/5). No VO2max during RSR. Chosen over Smolov on purpose.
-5. **Next: explosive / peak block** (power, heavier classic lifts, VO2max starts): written from real data after the RSR test.
-Order on purpose: ramp-up → size → strength → power. Upper body only as optional extras (Gym: arms, Freestyle).
+   **Kept (Nov 25) — the user wants to see how far it goes.** To be rebuilt for 5 days: RSR squats Mon/Wed/Fri
+   with the oly lifts, paused bench Tue/Thu + glutes.
+5. **Next: explosive / peak block** (power, heavier classic lifts, VO2max starts, bench peak if the meet is in May):
+   written from real data after the RSR test.
+Order on purpose: ramp-up → size → strength → power. **TODO before Jan 5:** restructure size + RSR blocks to 5 days
+(bench 2×/week, paused). Other upper body only as optional extras (Gym: arms, Freestyle).
 Keep every session ≤ ~85 min estimated (`estMin`), ideally 60–80.
 
 ## The app

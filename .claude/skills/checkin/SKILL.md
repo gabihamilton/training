@@ -15,7 +15,7 @@ description: Review the user's logged training (sessions, cardio, measurements) 
 2. If you need what a session *prescribed* (to compare), grep the template in `index.html`
    (`rampSessions`, `decSessions`, `sizeSessions`, `rsrSessions`, `HOME_BANDS`, `ARMS`) instead of reading the whole file.
    Ramp keys: `ramp:0..8` = weeks 1–3 × (A Snatch+squat, B Clean+hinge, C Front squat+jerk+glutes).
-   Size keys: `size:0..14` (weeks 1–5 × A/B/C; week 5 = squat tests). Extras: `home:bands`, `extra:arms`,
+   Size keys: `size:0..14` (weeks 1–5 × A/B/C; week 5 = squat tests). Extras: `home:bands`, `extra:arms`, `travel:legs`, `travel:upper`,
    key null = Freestyle (title is whatever the user named it). Lower-body days start with a 'Band warm-up' item.
    The user can do sessions out of order (Program → "do this"), so judge by key, not by date order.
 
