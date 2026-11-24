@@ -50,13 +50,16 @@ for s in sessions:
     if s['date'] < since: continue
     print(f"\n{s['date']} {s.get('title','')} [{s.get('key') or 'free'}] readiness {s.get('readiness') or '-'}/5")
     for e in s.get('exercises', []):
-        ds = [x for x in e['sets'] if x.get('done')]
-        miss = len(e['sets']) - len(ds)
+        ds = [x for x in e['sets'] if x.get('done') and not x.get('drop')]
+        miss = len([x for x in e['sets'] if not x.get('done')])
         rs = {str(x.get('r')) for x in ds}
         rtxt = rs.pop() if len(rs) == 1 else '/'.join(str(x.get('r')) for x in ds)
         ws = [w(x.get('w')) for x in ds]
         wtxt = ws[0] if len(set(ws)) == 1 else '/'.join(ws)
         line = f"  {e['name']}: {len(ds)}×{rtxt} @ {wtxt}" + (f" RPE {e['rpe']}" if e.get('rpe') else '')
+        if any(x.get('drop') for x in e['sets'] if x.get('done')):  # spell out drop sets: 15×6 ↘10×6 ↘5×6
+            line += "  [" + ''.join((' ↘' if x.get('drop') else (', ' if i else '')) + f"{w(x.get('w'))}×{x.get('r')}"
+                                    for i, x in enumerate(x for x in e['sets'] if x.get('done'))) + "]"
         if miss: line += f" ({miss} set(s) not done)"
         print(line)
     if s.get('notes'): print("  notes: " + ' / '.join(l.strip() for l in s['notes'].splitlines() if l.strip()))
@@ -70,7 +73,7 @@ for k, name in MAXES.items():
             if e['name'] != name: continue
             for x in e['sets']:
                 wt, r = num(x.get('w')), reps(x.get('r'))
-                if not x.get('done') or not wt: continue
+                if not x.get('done') or not wt or x.get('drop'): continue
                 v = wt * (1 + r / 30) if k in ('bs', 'fs') and 1 < r <= 10 else wt
                 if not best or v > best[0]: best = (v, wt, x.get('r'), s['date'])
     if best:
@@ -81,7 +84,7 @@ def wk(d): x = date.fromisoformat(d); return (x - timedelta(days=x.weekday())).i
 weeks = defaultdict(lambda: {'sess': 0, 'legs': 0, 'cardio': 0})
 for s in sessions:
     W = weeks[wk(s['date'])]; W['sess'] += 1
-    W['legs'] += sum(len([x for x in e['sets'] if x.get('done')]) for e in s.get('exercises', []) if e['name'] in LEGS)
+    W['legs'] += sum(len([x for x in e['sets'] if x.get('done') and not x.get('drop')]) for e in s.get('exercises', []) if e['name'] in LEGS)
 for c in by['cardio']: weeks[wk(c['date'])]['cardio'] += c.get('min') or 0
 print("\n## Weeks (Mon): sessions · leg/glute sets · cardio min")
 for k in sorted(weeks)[-8:]:

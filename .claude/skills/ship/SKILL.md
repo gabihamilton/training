@@ -19,6 +19,8 @@ Everything is in `index.html` (~1000 lines). Don't read it all; grep for what yo
 - `restMin` (rest timer per exercise) and `estMin` (session length); keep sessions ≲85 min.
 - Weight suggestions: `suggestW` / `lastPerfFor` / `BIG_LIFTS` (last top weight + RPE vs target → +5/+2.5/hold, shown as `hint`).
 - Logging: `startSession`, `finishSession`, `toggleSet`, rest timer `startRest`.
+- Drop sets: `addDrop` adds a set `{..., drop: true}` (~75% weight). Drops never count as sets, never feed
+  suggestions/e1RM/PRs, and aren't touched by the weight carry-forward in `setW`. Keep that true for new code.
 - Render: `renderToday`, `renderDraft`, Program tab, `renderProgress`, `renderMeasures`, `MEAS`.
 - Sync: `syncAll`, `localItems`, `applyRemote`, `scheduleSync`, `markSynced` (newer `client_ts` wins).
 - Edits: python `str.replace` heredocs or Edit tool; BSD `sed` on macOS.

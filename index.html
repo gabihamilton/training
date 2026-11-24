@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-version" content="2026-11-24.1">
+<meta name="app-version" content="2026-11-25.1">
 <title>Training log</title>
 <style>
   :root {
@@ -63,6 +63,8 @@
   .ex-hint { font-size: 12px; color: var(--ink-soft); margin: -2px 0 6px; }
   .set-row { display: grid; grid-template-columns: 28px 1fr 1fr 40px; gap: 8px; align-items: center; padding: 4px 0; }
   .set-row .n { font-size: 12px; color: var(--ink-soft); text-align: center; }
+  .set-row.drop .n { color: var(--warm, var(--accent)); font-weight: 600; }
+  .set-row.drop input { font-size: 14px; }
   .set-row input, .field input, .field select, .field textarea, select.inline {
     width: 100%; font-family: inherit; font-size: 15px; padding: 8px 10px; border-radius: 8px;
     border: 1px solid var(--line); background: var(--bg); color: var(--ink);
@@ -584,7 +586,7 @@ const e1rm = (w, r) => r <= 1 ? w : w * (1 + r / 30);
 function lastWeightFor(name) {
   for (let i = state.sessions.length - 1; i >= 0; i--) {
     const ex = state.sessions[i].exercises.find(e => e.name === name);
-    if (ex) { const done = ex.sets.filter(s => s.done && s.w); if (done.length) return Math.max(...done.map(s => s.w)); }
+    if (ex) { const done = ex.sets.filter(s => s.done && s.w && !s.drop); if (done.length) return Math.max(...done.map(s => s.w)); }
   }
   return null;
 }
@@ -594,7 +596,7 @@ function lastPerfFor(name) {
   for (let i = state.sessions.length - 1; i >= 0; i--) {
     const ex = state.sessions[i].exercises.find(e => e.name === name);
     if (!ex) continue;
-    const done = ex.sets.filter(s => s.done && s.w);
+    const done = ex.sets.filter(s => s.done && s.w && !s.drop);
     if (!done.length) continue;
     return { w: Math.max(...done.map(s => s.w)), rpe: parseFloat(ex.rpe) || null, missed: ex.sets.some(s => !s.done) };
   }
@@ -671,7 +673,7 @@ function detectPRs(rec) {
 function bestFrom(exs, k) {
   let b = 0;
   exs.forEach(e => e.sets.forEach(s => {
-    if (!s.done || !s.w) return;
+    if (!s.done || !s.w || s.drop) return;
     const v = (k === 'bs' || k === 'fs') ? (repsNum(s.r) <= 10 ? e1rm(s.w, repsNum(s.r)) : 0) : s.w;
     if (v > b) b = v;
   }));
@@ -743,13 +745,13 @@ function renderToday() {
   if (!items.length) h += `<div class="empty">Nothing logged yet.</div>`;
   items.forEach(it => {
     if (it.kind === 'lift') {
-      const s = it.s, sets = s.exercises.reduce((a, e) => a + e.sets.filter(x => x.done).length, 0);
+      const s = it.s, sets = s.exercises.reduce((a, e) => a + e.sets.filter(x => x.done && !x.drop).length, 0);
       h += `<details class="hist-item" style="display:block"><summary style="display:flex;justify-content:space-between;gap:10px">
           <span>${esc(s.title)}<div class="meta">${niceDate(s.date)} · ${sets} sets${s.readiness ? ' · legs ' + s.readiness + '/5' : ''}</div></span>
           <span class="meta">▾</span></summary>
           <div class="small muted" style="margin-top:6px">${s.exercises.map(e => {
             const d = e.sets.filter(x => x.done);
-            return d.length ? `<div><b style="color:var(--ink)">${esc(e.name)}</b>: ${d.map(x => (x.w ? fmt(x.w) : 'bw') + '×' + esc(x.r)).join(', ')}${e.rpe ? ' · RPE ' + esc(e.rpe) : ''}</div>` : '';
+            return d.length ? `<div><b style="color:var(--ink)">${esc(e.name)}</b>: ${d.map((x, k) => (x.drop ? ' ↘' : (k ? ', ' : '')) + (x.w ? fmt(x.w) : 'bw') + '×' + esc(x.r)).join('')}${e.rpe ? ' · RPE ' + esc(e.rpe) : ''}</div>` : '';
           }).join('')}${s.notes ? `<div style="margin-top:4px">📝 ${esc(s.notes)}</div>` : ''}
           <button class="link-btn danger" onclick="delSession('${s.id}')">Delete</button></div></details>`;
     } else {
@@ -781,14 +783,15 @@ function renderDraft() {
       ${e.note ? `<div class="ex-note">${esc(e.note)}</div>` : ''}
       ${e.hint ? `<div class="ex-hint">${esc(e.hint)}</div>` : ''}
       <div class="set-row"><span></span><span class="unit">${U()}</span><span class="unit">reps</span><span></span></div>
-      ${e.sets.map((s, j) => `<div class="set-row">
-          <span class="n">${j + 1}</span>
+      ${e.sets.map((s, j) => `<div class="set-row${s.drop ? ' drop' : ''}">
+          <span class="n">${s.drop ? '↘' : e.sets.slice(0, j + 1).filter(x => !x.drop).length}</span>
           <input type="number" inputmode="decimal" step="any" value="${s.w != null ? fmt(s.w) : ''}" onchange="setW(${i},${j},this.value)">
-          <input value="${esc(s.r)}" onchange="state.draft.exercises[${i}].sets[${j}].r=this.value;save()">
+          <input value="${esc(s.r)}" ${s.drop ? 'placeholder="reps"' : ''} onchange="state.draft.exercises[${i}].sets[${j}].r=this.value;save()">
           <button class="chk${s.done ? ' on' : ''}" onclick="toggleSet(${i},${j})">✓</button>
         </div>`).join('')}
       <div class="ex-foot">
         <span><button class="link-btn" onclick="addSet(${i})">+ set</button> &nbsp;
+        <button class="link-btn" onclick="addDrop(${i})">+ drop</button> &nbsp;
         <button class="link-btn danger" onclick="rmSet(${i})">− set</button></span>
         <select class="inline" style="width:auto;font-size:13px;padding:5px 8px" onchange="state.draft.exercises[${i}].rpe=this.value;save()">
           <option value="">RPE</option>${['5','6','7','7.5','8','8.5','9','9.5','10'].map(v => `<option${e.rpe === v ? ' selected' : ''}>${v}</option>`).join('')}
@@ -809,7 +812,7 @@ function setW(i, j, v) {
   const kg = v === '' ? null : toKg(parseFloat(v));
   ex.sets[j].w = kg;
   // carry weight forward to later sets that haven't been done yet
-  for (let k = j + 1; k < ex.sets.length; k++) if (!ex.sets[k].done) ex.sets[k].w = kg;
+  if (!ex.sets[j].drop) for (let k = j + 1; k < ex.sets.length; k++) if (!ex.sets[k].done && !ex.sets[k].drop) ex.sets[k].w = kg;
   save(); render();
 }
 function toggleSet(i, j) {
@@ -866,7 +869,13 @@ function drawRest() {
   bar.querySelector('.rt-fill').style.width = (100 * (1 - left / restTotal)).toFixed(1) + '%';
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && restEnd) drawRest(); });
-function addSet(i) { const sets = state.draft.exercises[i].sets; const l = sets[sets.length - 1]; sets.push({ w: l ? l.w : null, r: l ? l.r : '5', done: false }); save(); render(); }
+function addSet(i) { const sets = state.draft.exercises[i].sets; const l = sets.filter(x => !x.drop).pop(); sets.push({ w: l ? l.w : null, r: l ? l.r : '5', done: false }); save(); render(); }
+// Drop set: a row right after the last set, ~75% of its weight, reps left empty. Counts with its main set, not as a new one.
+function addDrop(i) {
+  const sets = state.draft.exercises[i].sets, l = sets[sets.length - 1];
+  const w = l && l.w ? toKg(roundDisp(toDisp(l.w) * 0.75)) : null;
+  sets.push({ w, r: '', done: false, drop: true }); save(); render();
+}
 function rmSet(i) { state.draft.exercises[i].sets.pop(); save(); render(); }
 function addExercise() {
   const n = $('#new-ex').value.trim(); if (!n) return;
@@ -992,7 +1001,7 @@ function renderProgress() {
   const legSets = wks.map(w => {
     const end = new Date(w + 'T12:00'); end.setDate(end.getDate() + 7); const e = end.toISOString().slice(0, 10);
     return state.sessions.filter(s => s.date >= w && s.date < e)
-      .reduce((a, s) => a + s.exercises.filter(x => LEGS.has(x.name)).reduce((b, x) => b + x.sets.filter(y => y.done).length, 0), 0);
+      .reduce((a, s) => a + s.exercises.filter(x => LEGS.has(x.name)).reduce((b, x) => b + x.sets.filter(y => y.done && !y.drop).length, 0), 0);
   });
   h += `<div class="section-title">Leg & glute sets per week</div><div class="card chart">${barChart(wks, [legSets], ['var(--done-line)'])}
     <div class="muted small" style="margin-top:6px">Squats, lunges, split squats, hip thrusts, RDLs, good mornings, cable glute/hamstring work. Not counting the oly lifts. For growth, ~12–20 hard sets/week is the target range.</div></div>`;
