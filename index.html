@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-version" content="2026-11-19.1">
+<meta name="app-version" content="2026-11-24.1">
 <title>Training log</title>
 <style>
   :root {
@@ -343,7 +343,7 @@ function rampSessions() {
       { n: 'Push jerk', s: 5, r: 2, rpe: '7' },
       { n: 'Hip thrust', s: 4, r: 8, rpe: '8', note: 'Heavy. Pause 1s at the top.' },
       { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap. No strap? Single-leg RDL (back foot up) instead.' },
-      { n: 'Sled push', s: 4, r: '20m', note: 'Heavy enough to be a grind, not a sprint. Rest ~90s.' },
+      { n: 'Kettlebell swing', s: 3, r: 15, note: 'Hip snap, not a squat. Squeeze glutes hard at the top. Go up a bell when RPE ≤ 7.' },
       ghdSitup(i),
     ]});
   });
@@ -375,7 +375,7 @@ function decSessions() {
       { n: 'Kettlebell swing', s: 4, r: 15, note: 'Hip snap, not a squat. Squeeze glutes hard at the top.' },
       { n: 'Cable kickback', s: 2, r: '12/leg', rpe: '9' },
       { n: 'DB calf raise', s: 3, r: 15, note: 'One leg at a time, on a plate.' },
-      { n: 'Sled push', s: 4, r: '20m', note: 'Finisher. Heavy, steady.' },
+      { n: 'DB step-up', s: 3, r: '10/leg', rpe: '8', note: 'Knee-height box, drive through the heel, slow down.' },
     ]});
     if (light) out.slice(-3).forEach(s => s.title += ' (deload)');
   });
@@ -416,7 +416,7 @@ function sizeSessions() {
       { n: 'Hip thrust', s: acc, r: 8, rpe: t ? '7' : '9', note: 'Heavy. Pause 1s at the top.' },
       { n: 'Goblet squat', s: t ? 2 : 3, r: 15, rpe: t ? '7' : '9', note: 'Heels on plates, slow down, no pause at the top.' },
       { n: 'Cable kickback', s: 2, r: '12/leg', rpe: '9' },
-      { n: 'Sled push', s: t ? 3 : 4, r: '20m', note: 'Finisher. Heavy, steady.' },
+      { n: 'Kettlebell swing', s: t ? 2 : 3, r: 15, note: 'Finisher. Hip snap, squeeze glutes hard at the top.' },
     ]});
   }
   return out;
