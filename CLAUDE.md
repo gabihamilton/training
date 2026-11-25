@@ -11,7 +11,9 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - Bench history: 50 kg×8, 57 kg×2 at Fermilab; long ago 61 kg×1, then 61 kg×4 a year later. Detrained now.
 - Best lifts (old): snatch 135 lb, C&J ~155 lb, back squat 215 lb. Working maxes in the app start at
   snatch 61, C&J 70, BS 97.5, FS 83 kg; to be reset from the week-3 ramp-up squat tests.
-- Cardio: daily bike commute to CERN (zone 2, ~5 h/week from Nov 18); VO2max work comes after the RSR.
+- Cardio: bike commute to CERN (~60 min/day, mostly easy, some Zone 3–4 on the climb; easiest gear already),
+  3–4 days/week for now (Nov 25: not ready for every day). Rides are getting easier. Plus 1 weekend zone 2 run
+  (20–30 min; feeds Apple Cardio Fitness, which ignores cycling). VO2max work comes after the RSR.
 - Nov 17: blood donation refused for low red cell count (period coming) → suggested checking ferritin/iron with a doctor.
 - Lifting shoes arrive end of November. December is chaotic: **away Dec 2–9 and Dec 19 – ~Jan 4**
   (travel sessions: `travel:legs`, `travel:upper`); gym only ~Dec 10–18.
@@ -24,8 +26,8 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every lower-body day (squat and hinge days).
 
 ## Schedule & logistics
-- Gym is at CERN Meyrin. **From Nov 18 the plan is to bike there every day** (~30 min each way = ~60 min zone 2/day;
-  needs rain gear). Car (roommate, 8:50–17:30) is the fallback: lift ~9:00 or ~14:00. Gym platform is booked; 14:00 is quiet. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
+- Gym is at CERN Meyrin. **Bike 3–4 days/week** (~30 min each way; needs rain gear), building toward daily.
+  Car on the other days, best on squat-test / heavy squat days. Car (roommate, 8:50–17:30): lift ~9:00 or ~14:00. Gym platform is booked; 14:00 is quiet. May need P5 often: lift 9:00 → 10:50 shuttle, back on the 15:45.
 - Now: 3–4 lifts/week; did B and C on back-to-back days by choice (Nov 23–24). **From January: 5 days/week**
   (+ optional weekend): heavy leg days alternate with bench/glute days, never two hard leg days in a row.
   Weekends optional (travel, visitors).
