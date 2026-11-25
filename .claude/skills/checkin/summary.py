@@ -14,8 +14,8 @@ LEGS = {'Back squat','Front squat','Bulgarian split squat','Hip thrust','Romania
         'GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat','Banded glute bridge',
         'Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump',
         'Jump squat','Single-leg hip thrust','Cossack squat'}
-MAXES = {'snatch': 'Snatch', 'cj': 'Clean & jerk', 'bs': 'Back squat', 'fs': 'Front squat'}
-PHASE_LEN = {'ramp': 9, 'dec': 15, 'size': 15, 'rsr': 18}  # sessions per phase (dec includes optional pump days)
+MAXES = {'snatch': 'Snatch', 'cj': 'Clean & jerk', 'bs': 'Back squat', 'fs': 'Front squat', 'bench': 'Bench press'}
+PHASE_LEN = {'ramp': 9, 'dec': 15, 'size': 25, 'rsr': 30}  # sessions per phase (dec includes optional pump days)
 
 days = 42
 if '--days' in sys.argv: days = int(sys.argv[sys.argv.index('--days') + 1])
@@ -75,10 +75,10 @@ for k, name in MAXES.items():
             for x in e['sets']:
                 wt, r = num(x.get('w')), reps(x.get('r'))
                 if not x.get('done') or not wt or x.get('drop'): continue
-                v = wt * (1 + r / 30) if k in ('bs', 'fs') and 1 < r <= 10 else wt
+                v = wt * (1 + r / 30) if k in ('bs', 'fs', 'bench') and 1 < r <= 10 else wt
                 if not best or v > best[0]: best = (v, wt, x.get('r'), s['date'])
     if best:
-        tag = f"e1RM {best[0]:.1f}" if k in ('bs', 'fs') else 'top'
+        tag = f"e1RM {best[0]:.1f}" if k in ('bs', 'fs', 'bench') else 'top'
         print(f"  {name}: {tag} ({w(best[1])}×{best[2]} on {best[3]}) · working max {settings.get('maxes', {}).get(k, '-')}")
 
 def wk(d): x = date.fromisoformat(d); return (x - timedelta(days=x.weekday())).isoformat()

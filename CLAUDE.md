@@ -45,20 +45,22 @@ sled (push/pull), plyo boxes (box jumps for height), kettlebells, mats.
 ## Program (session queue, not calendar)
 Optional extras outside the queue: **Home: glutes + abs** (`home:bands`), **Gym: arms** (`extra:arms`),
 **Travel: legs + glutes / upper + core** (`travel:legs`, `travel:upper`; bodyweight + bands, no weight hints),
-**Freestyle** (free session, nameable, e.g. park bars).
+**Weekend: heavy singles** (`extra:singles`), **Freestyle** (free session, nameable, e.g. park bars).
 1. **Ramp-up** (3 wks × 3, from Nov 11): RPE-based; week 3 = squat tests that set the working maxes.
 2. **December minimum dose** (5 wks): 2 core sessions + optional legs/glutes pump day; % of working maxes; wk 5 deload.
-3. **Leg size block** (5 wks × 3, Jan 5 – Feb 8): hypertrophy before strength. BS 3–5×8–10 / FS 3–4×8 @ 65–70%,
-   accessories at RPE 9; oly lifts light (65%, technique). Week 5 = lighter + squat tests → maxes for RSR.
-4. **Russian Squat Routine** (6 wks × 3, Feb 9 – Mar 22): standard table (6×2…6×6 @80%, then 85/90/95/100/105%),
-   built into oly sessions at 70–75%. Easy zone 2 jogs OK (20–30 min, not the day before a big squat day,
-   none in weeks 5–6 or when legs ≤2/5). No VO2max during RSR. Chosen over Smolov on purpose.
-   **Kept (Nov 25) — the user wants to see how far it goes.** To be rebuilt for 5 days: RSR squats Mon/Wed/Fri
-   with the oly lifts, paused bench Tue/Thu + glutes.
+3. **Leg size block** (5 wks × 5 days, Jan 5 – Feb 8): Mon snatch + BS · Tue paused bench + heavy hip thrust ·
+   Wed C&J + FS · Thu bench volume + arms · Fri clean + hinge. BS 3–5×8–10 / FS 3–4×8 @ 65–70%, accessories RPE 9,
+   oly 65→72%, bench 4×6 @70% → 5×5 @77.5%. ~40 leg/glute sets/week. Week 5 = lighter + tests (BS + snatch Mon,
+   C&J Wed, paused bench Thu, FS Fri) → maxes for RSR.
+4. **Russian Squat Routine** (6 wks × 5 days, Feb 9 – Mar 22): standard table (6×2…6×6 @80%, then 85/90/95/100/105%)
+   on Mon/Wed/Fri inside oly sessions at 70–75%. Tue paused bench 5×5 @75% → 3×1 @87.5% + heavy hip thrust;
+   Thu bench volume + arms. Glute work drops in weeks 5–6. Easy zone 2 jogs OK (20–30 min, not the day before a
+   big squat day, none in weeks 5–6 or when legs ≤2/5). No VO2max during RSR. Chosen over Smolov on purpose;
+   kept (Nov 25) because the user wants to see how far it goes.
 5. **Next: explosive / peak block** (power, heavier classic lifts, VO2max starts, bench peak if the meet is in May):
    written from real data after the RSR test.
-Order on purpose: ramp-up → size → strength → power. **TODO before Jan 5:** restructure size + RSR blocks to 5 days
-(bench 2×/week, paused). Other upper body only as optional extras (Gym: arms, Freestyle).
+Order on purpose: ramp-up → size → strength → power. Weekends: optional extras, incl. **Weekend: heavy singles**
+(`extra:singles`; only legs ≥3/5, not before a squat test, not RSR weeks 5–6). Bench working max (`bench`) starts 52.5.
 Keep every session ≤ ~85 min estimated (`estMin`), ideally 60–80.
 
 ## The app

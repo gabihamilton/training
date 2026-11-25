@@ -13,9 +13,11 @@ description: Review the user's logged training (sessions, cardio, measurements) 
    It prints working maxes, program position (e.g. `ramp 2/9 done`), each session (sets×reps @ weights, RPE,
    notes), bests/e1RMs vs working max, weekly sessions · leg/glute sets · cardio min, measurements and change.
 2. If you need what a session *prescribed* (to compare), grep the template in `index.html`
-   (`rampSessions`, `decSessions`, `sizeSessions`, `rsrSessions`, `HOME_BANDS`, `ARMS`) instead of reading the whole file.
+   (`rampSessions`, `decSessions`, `sizeSessions`, `rsrSessions`, `HOME_BANDS`, `ARMS`, `SINGLES`) instead of reading the whole file.
    Ramp keys: `ramp:0..8` = weeks 1–3 × (A Snatch+squat, B Clean+hinge, C Front squat+jerk+glutes).
-   Size keys: `size:0..14` (weeks 1–5 × A/B/C; week 5 = squat tests). Extras: `home:bands`, `extra:arms`, `travel:legs`, `travel:upper`,
+   Size keys: `size:0..24` (weeks 1–5 × Mon–Fri: snatch+BS, bench+glutes, C&J+FS, bench+arms, clean+hinge; week 5 = tests).
+   RSR keys: `rsr:0..29` (6 weeks × the same 5-day pattern, squats Mon/Wed/Fri). Bench max key `bench`.
+   Extras: `home:bands`, `extra:arms`, `extra:singles`, `travel:legs`, `travel:upper`,
    key null = Freestyle (title is whatever the user named it). Lower-body days start with a 'Band warm-up' item.
    The user can do sessions out of order (Program → "do this"), so judge by key, not by date order.
 
