@@ -1,5 +1,7 @@
 # Training log — project brief
 
+Shared profile (goal, day types, health, logistics; private, outside the repo): @~/.claude/me.md
+
 A personal training app plus the program it runs. Live at https://gabihamilton.github.io/training/
 (iPhone home-screen web app). Data syncs to Supabase; check-ins read it from there (use `/checkin`).
 
