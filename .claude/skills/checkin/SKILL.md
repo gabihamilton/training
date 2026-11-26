@@ -31,6 +31,8 @@ description: Review the user's logged training (sessions, cardio, measurements) 
 - **Schedule:** respect the logistics in CLAUDE.md (car/bike/P5, weekends optional). Suggest the next session and day; avoid front squat the day after RDL/lunges in ramp-up,
   no heavy legs day after a big squat day, a day off after 2–3 days in a row.
 - **Measurements:** monthly, morning, before eating/training. Thigh/hip up with waist stable = good.
+- **Cardio:** types `bike`, `z2`, `vo2`, `bench` (monthly zone 2 benchmark run on the Nov 26 loop; all of them are listed,
+  with m/100 heartbeats = distance / (min × avg HR); higher = fitter. Nov 26 baseline 86, Aug runs 75–82). Due every ~4 weeks.
 - Drop sets: sets with `drop: true`; summary shows them as `[70×8 ↘50×8 ↘35×10]` and doesn't count them as sets.
 - Data quirks: box jump `w` is box height in **cm**; band exercises usually have no weight; GHD `w` 0 = bodyweight.
 

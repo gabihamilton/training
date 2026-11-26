@@ -16,6 +16,9 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - Cardio: bike commute to CERN (~60 min/day, mostly easy, some Zone 3–4 on the climb; easiest gear already),
   3–4 days/week for now (Nov 25: not ready for every day). Rides are getting easier. Plus 1 weekend zone 2 run
   (20–30 min; feeds Apple Cardio Fitness, which ignores cycling). VO2max work comes after the RSR.
+  **Monthly benchmark run** (cardio type `bench`, app card when ≥28 days): Nov 26 loop from home (4.8 km, ~47 m climb),
+  zone 2 (≤145 bpm), logged with avg HR → metres per 100 heartbeats. Baseline Nov 26: 86 (Aug zone 2 runs 75–82).
+  Apple VO2max 35.5 (Nov), was 36–37 Mar–Sep.
 - Nov 17: blood donation refused for low red cell count (period coming) → suggested checking ferritin/iron with a doctor.
 - Lifting shoes arrive end of November. December is chaotic: **away Dec 2–9 and Dec 19 – ~Jan 4**
   (travel sessions: `travel:legs`, `travel:upper`); gym only ~Dec 10–18.

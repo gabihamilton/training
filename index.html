@@ -162,7 +162,7 @@ function defaultState() {
       maxes: { snatch: 61, cj: 70, bs: 97.5, fs: 83, bench: 52.5 },
     },
     sessions: [],   // {id, date, key, title, readiness, notes, exercises:[{name, rpe, note, sets:[{w(kg), r, done}]}]}
-    cardio: [],     // {id, date, type, min, mi, notes} — distance in miles (Apple Watch). Older entries have `km` (real km), converted for display by cardioMi().
+    cardio: [],     // {id, date, type (bike/z2/bench/vo2), min, mi, hr?, notes} — distance in miles (Apple Watch). Older entries have `km` (real km), converted for display by cardioMi().
     measures: [],   // {id, date, waist, hips, thighL, thighR, calf, bicep, forearm, notes} in cm
     skipped: [],    // program keys
     draft: null,
@@ -759,6 +759,9 @@ function bestFrom(exs, k) {
    ============================================================ */
 let tab = 'today';
 let cardioType = 'bike';
+const BENCH_HOWTO = 'Same loop as Nov 26 (from home, ~4.8 km, ~47 m climb). Zone 2: keep HR ≤145, slow down or walk on the climb if needed. Not the day after a heavy leg day. Log minutes, miles and avg HR from the Fitness app; the app tracks metres per 100 heartbeats (higher = fitter).';
+// metres covered per 100 heartbeats: distance / (minutes × avg HR)
+function benchEff(c) { const mi = cardioMi(c); return c.type === 'bench' && mi && c.hr && c.min ? Math.round(mi * 1609.344 / (c.min * c.hr) * 1000) / 10 : null; }
 
 function renderToday() {
   if (state.draft) return renderDraft();
@@ -792,17 +795,25 @@ function renderToday() {
     <h2>Measurements due</h2><p class="muted">${lastM ? 'Last ones were ' + daysSince + ' days ago.' : 'Take a first set to have a baseline.'} Best done first thing in the morning, before eating or training.</p>
     <button class="btn secondary" onclick="tab='progress';measureOpen=true;render();setTimeout(()=>document.getElementById('measure-form').scrollIntoView(),50)">Add measurements</button></div>`;
 
+  const lastB = state.cardio.filter(c => c.type === 'bench').map(c => c.date).sort().pop();
+  const bDays = lastB ? Math.round((new Date(todayISO()) - new Date(lastB)) / 864e5) : null;
+  if (!lastB || bDays >= 28) h += `<div class="card" style="margin-top:12px"><span class="pill warm">Monthly</span>
+    <h2>Benchmark run due</h2><p class="muted">${lastB ? 'Last one was ' + bDays + ' days ago.' : 'Log the Nov 26 run as the first one (40.8 min, 3.01 mi, 138 bpm).'} ${BENCH_HOWTO}</p>
+    <button class="btn secondary" onclick="cardioType='bench';render();setTimeout(()=>document.getElementById('cardio-types').scrollIntoView(),50)">Log benchmark run</button></div>`;
+
   // cardio quick log
   h += `<div class="section-title">Log cardio</div><div class="card">
     <div class="quick" id="cardio-types">
-      ${[['bike','🚲 Bike to CERN'],['z2','Zone 2'],['vo2','VO2max']].map(([k, l]) =>
+      ${[['bike','🚲 Bike to CERN'],['z2','Zone 2'],['bench','📏 Benchmark run'],['vo2','VO2max']].map(([k, l]) =>
         `<button class="${cardioType === k ? 'sel' : ''}" onclick="cardioType='${k}';render()">${l}</button>`).join('')}
     </div>
     <div class="row" style="margin-top:10px">
       <div class="field"><label>Minutes</label><input id="c-min" type="number" inputmode="numeric" value="${cardioType === 'bike' ? 30 : ''}"></div>
-      <div class="field"><label>Miles (optional)</label><input id="c-mi" type="number" inputmode="decimal" step="0.1"></div>
+      <div class="field"><label>Miles${cardioType === 'bench' ? '' : ' (optional)'}</label><input id="c-mi" type="number" inputmode="decimal" step="0.1"></div>
       <div class="field"><label>Date</label><input id="c-date" type="date" value="${todayISO()}"></div>
     </div>
+    ${cardioType === 'bench' || cardioType === 'z2' ? `<div class="field"><label>Avg heart rate (bpm${cardioType === 'bench' ? '' : ', optional'})</label><input id="c-hr" type="number" inputmode="numeric"></div>` : ''}
+    ${cardioType === 'bench' ? `<p class="muted small" style="margin:0 2px 8px">${BENCH_HOWTO}</p>` : ''}
     <div class="field"><label>Notes</label><input id="c-notes" placeholder="${cardioType === 'vo2' ? 'e.g. 5×3 min hard / 3 min easy' : ''}"></div>
     <button class="btn" onclick="addCardio()">Save cardio</button>
   </div>`;
@@ -834,8 +845,8 @@ function renderToday() {
           }).join('')}${s.notes ? `<div style="margin-top:4px">📝 ${esc(s.notes)}</div>` : ''}
           <button class="link-btn danger" onclick="delSession('${s.id}')">Delete</button></div></details>`;
     } else {
-      const c = it.c, lbl = { bike: '🚲 Bike to CERN', z2: 'Zone 2', vo2: 'VO2max' }[c.type] || c.type;
-      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${cardioMi(c) ? ' · ' + cardioMi(c) + ' mi' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
+      const c = it.c, lbl = { bike: '🚲 Bike to CERN', z2: 'Zone 2', bench: '📏 Benchmark run', vo2: 'VO2max' }[c.type] || c.type;
+      h += `<div class="hist-item"><span>${lbl}<div class="meta">${niceDate(c.date)} · ${c.min} min${cardioMi(c) ? ' · ' + cardioMi(c) + ' mi' : ''}${c.hr ? ' · ' + c.hr + ' bpm' : ''}${benchEff(c) ? ' · ' + benchEff(c) + ' m/100 beats' : ''}${c.notes ? ' · ' + esc(c.notes) : ''}</div></span>
         <button class="link-btn danger" onclick="delCardio('${c.id}')">✕</button></div>`;
     }
   });
@@ -967,7 +978,9 @@ function delSession(id) { if (!confirm('Delete this session?')) return; state.se
 function delCardio(id) { state.cardio = state.cardio.filter(c => c.id !== id); state.deleted[id] = Date.now(); save(); scheduleSync(); render(); }
 function addCardio() {
   const min = parseFloat($('#c-min').value); if (!min) { toast('Add the minutes'); return; }
-  state.cardio.push({ _ts: Date.now(), id: uid(), date: $('#c-date').value || todayISO(), type: cardioType, min, mi: parseFloat($('#c-mi').value) || null, notes: $('#c-notes').value.trim() });
+  const hr = $('#c-hr') ? parseFloat($('#c-hr').value) || null : null;
+  if (cardioType === 'bench' && (!hr || !parseFloat($('#c-mi').value))) { toast('Benchmark needs miles and avg HR'); return; }
+  state.cardio.push({ _ts: Date.now(), id: uid(), date: $('#c-date').value || todayISO(), type: cardioType, min, mi: parseFloat($('#c-mi').value) || null, hr, notes: $('#c-notes').value.trim() });
   save(); scheduleSync(); toast('Cardio saved'); render();
 }
 
@@ -1088,10 +1101,13 @@ function renderProgress() {
   const types = ['bike', 'z2', 'vo2'];
   const cmin = types.map(t => wks.map(w => {
     const end = new Date(w + 'T12:00'); end.setDate(end.getDate() + 7); const e = end.toISOString().slice(0, 10);
-    return state.cardio.filter(c => c.type === t && c.date >= w && c.date < e).reduce((a, c) => a + (+c.min || 0), 0);
+    return state.cardio.filter(c => (c.type === t || (t === 'z2' && c.type === 'bench')) && c.date >= w && c.date < e).reduce((a, c) => a + (+c.min || 0), 0);
   }));
   h += `<div class="section-title">Cardio minutes per week</div><div class="card chart">${barChart(wks, cmin, ['var(--c-bike)', 'var(--c-z2)', 'var(--c-vo2)'])}
     <div class="legend"><span><i style="background:var(--c-bike)"></i>Bike commute</span><span><i style="background:var(--c-z2)"></i>Zone 2</span><span><i style="background:var(--c-vo2)"></i>VO2max</span></div></div>`;
+  const bPts = state.cardio.filter(c => benchEff(c)).sort((a, b) => a.date.localeCompare(b.date)).map(c => ({ date: c.date, v: benchEff(c) }));
+  h += `<div class="section-title">Benchmark run (monthly)</div><div class="card chart">${lineChart(bPts, null, { raw: true, unit: 'm/100 beats', empty: 'Log a benchmark run to start the trend.' })}
+    <div class="muted small" style="margin-top:6px">Metres per 100 heartbeats on the same zone 2 loop. Higher = more distance for the same effort. Nov 26 baseline: 86 (Aug runs were 75–82).</div></div>`;
   return h + renderMeasures();
 }
 

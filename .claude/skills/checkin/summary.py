@@ -91,10 +91,10 @@ print("\n## Weeks (Mon): sessions · leg/glute sets · cardio min")
 for k in sorted(weeks)[-8:]:
     W = weeks[k]; print(f"  {k}: {W['sess']} · {W['legs']} · {W['cardio']}")
 
-cardio = [c for c in sorted(by['cardio'], key=lambda c: c['date']) if c['date'] >= since]
+cardio = [c for c in sorted(by['cardio'], key=lambda c: c['date']) if c['date'] >= since or c['type'] == 'bench']
 if cardio:
     print("\n## Cardio")
-    for c in cardio: print(f"  {c['date']} {c['type']} {c.get('min')} min" + (f" {c.get('mi') or round(c['km'] / 1.609344, 2)} mi" if (c.get('mi') or c.get('km')) else '') + (f" — {c['notes']}" if c.get('notes') else ''))
+    for c in cardio: print(f"  {c['date']} {c['type']} {c.get('min')} min" + (f" {c.get('mi') or round(c['km'] / 1.609344, 2)} mi" if (c.get('mi') or c.get('km')) else '') + (f" @{c['hr']} bpm" if c.get('hr') else '') + (f" = {round((c.get('mi') or c['km'] / 1.609344) * 1609.344 / (c['min'] * c['hr']) * 100, 1)} m/100 beats" if c['type'] == 'bench' and c.get('hr') and c.get('min') and (c.get('mi') or c.get('km')) else '') + (f" — {c['notes']}" if c.get('notes') else ''))
 
 ms = sorted(by['measure'], key=lambda m: m['date'])
 if ms:
