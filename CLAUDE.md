@@ -10,7 +10,7 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - **Priorities (Nov 25):** 1) weightlifting (what makes the user happy; loves being in the gym), 2) huge glutes/legs,
   3) squat, 4) **bench**: informal CERN bench meet (IPF rules → paused bench), probably **May** (date TBC).
   Squats have always been the weak point. Rarely sore; Ganbaru felt easy.
-- Bench history: 50 kg×8, 57 kg×2 at Fermilab; long ago 61 kg×1, then 61 kg×4 a year later. Detrained now.
+- Bench history: 50 kg×8, 57 kg×2 at Fermilab; long ago 61 kg×4; **best single ever 145 lb (65.8 kg)**. Detrained now.
 - Best lifts (old): snatch 135 lb, C&J ~155 lb, back squat 215 lb. Working maxes in the app start at
   snatch 61, C&J 70, BS 97.5, FS 83 kg; to be reset from the week-3 ramp-up squat tests.
 - Cardio: bike commute to CERN (~60 min/day, mostly easy, some Zone 3–4 on the climb; easiest gear already),
