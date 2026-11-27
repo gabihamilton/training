@@ -27,6 +27,7 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 - Weak at pull-ups (~4 max) → single-arm cable pulldowns instead.
 - **Favourites:** single-leg RDL with the back foot up (great for glutes), GHD sit-ups, bench press,
   incline DB curl, cable pushdown. Use them when choosing exercises.
+- Hip thrusts annoy the user (prefers a low bench): only on Tue bench + glutes days; sumo deadlift replaces them elsewhere.
 - Soreness shows up in quads/hamstrings, rarely glutes; don't judge glute work by soreness.
 - Home: light rubber bands + tighter fabric bands. Band warm-up (glute bridge + lateral walk) opens every lower-body day (squat and hinge days).
 

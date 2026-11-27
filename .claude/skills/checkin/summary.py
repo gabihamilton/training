@@ -13,7 +13,7 @@ LEGS = {'Back squat','Front squat','Bulgarian split squat','Hip thrust','Romania
         'Single-leg DB RDL','Single-leg RDL (back foot up)','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback',
         'GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat','Banded glute bridge',
         'Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump',
-        'Jump squat','Single-leg hip thrust','Cossack squat'}
+        'Jump squat','Single-leg hip thrust','Cossack squat','Sumo deadlift'}
 MAXES = {'snatch': 'Snatch', 'cj': 'Clean & jerk', 'bs': 'Back squat', 'fs': 'Front squat', 'bench': 'Bench press'}
 PHASE_LEN = {'ramp': 9, 'dec': 15, 'size': 25, 'rsr': 30}  # sessions per phase (dec includes optional pump days)
 

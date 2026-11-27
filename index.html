@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-version" content="2026-11-25.3">
+<meta name="app-version" content="2026-11-27.1">
 <title>Training log</title>
 <style>
   :root {
@@ -309,7 +309,7 @@ const E1RM_KEYS = new Set(['bs', 'fs', 'bench']);  // best = e1RM from sets ≤1
 const LEGS = new Set(['Back squat','Front squat','Bulgarian split squat','Hip thrust','Romanian deadlift',
   'Banded glute bridge','Single-leg glute bridge','Banded lateral walk','Banded clamshell','Banded kickback','Frog pump',
   'Walking lunge','Goblet squat','Single-leg DB RDL','Single-leg RDL (back foot up)','DB calf raise','Good morning','DB step-up','Cable leg curl','Cable pull-through','Cable kickback','GHD hip extension','Sled push','Kettlebell swing','Overhead squat','Pause back squat',
-  'Jump squat','Single-leg hip thrust','Cossack squat']);
+  'Jump squat','Single-leg hip thrust','Cossack squat','Sumo deadlift']);
 
 // GHD sit-ups: start conservative, they can make abs very sore at first
 function ghdSitup(week0) {
@@ -333,7 +333,7 @@ function rampSessions() {
       { n: 'Snatch pull', s: 3, r: 3, rpe: '7' },
       t ? { n: 'Back squat', s: 1, r: 3, note: w.bs } : { n: 'Back squat', s: 4, r: i ? 5 : 6, rpe: w.rpe, note: 'Small plates under heels until the shoes arrive.' },
       { n: 'Bulgarian split squat', s: 3, r: '8/leg', rpe: '8' },
-      { n: 'Hip thrust', s: 3, r: 10, rpe: '8' },
+      { n: 'Sumo deadlift', s: 3, r: 8, rpe: '7', note: 'Wide stance, toes out, push the floor apart. Hips close to the bar, lock out with the glutes.' },
       ghdSitup(i),
     ]});
     out.push({ title: 'Clean + hinge', ex: [
@@ -349,7 +349,7 @@ function rampSessions() {
       { n: 'Overhead squat', s: 4, r: 3, rpe: '6', note: 'Light. Mobility + position.' },
       t ? { n: 'Front squat', s: 1, r: 3, note: w.fs } : { n: 'Front squat', s: 4, r: 5, rpe: w.rpe },
       { n: 'Push jerk', s: 5, r: 2, rpe: '7' },
-      { n: 'Hip thrust', s: 4, r: 8, rpe: '8', note: 'Heavy. Pause 1s at the top.' },
+      { n: 'Sumo deadlift', s: 3, r: 6, rpe: '7', note: 'Wide stance, toes out, push the floor apart. Hips close to the bar, lock out with the glutes.' },
       { n: 'Cable leg curl', s: 3, r: '12/leg', rpe: '8', note: 'Standing, ankle strap. No strap? Single-leg RDL (back foot up) instead.' },
       { n: 'Kettlebell swing', s: 3, r: 15, note: 'Hip snap, not a squat. Squeeze glutes hard at the top. Go up a bell when RPE ≤ 7.' },
       ghdSitup(i),
@@ -367,7 +367,7 @@ function decSessions() {
       { n: 'Box jump', s: 3, r: 2, note: 'For height. Full reset between jumps, step down.' },
       { n: 'Snatch', s: 5, r: 2, pct: p, of: 'snatch' },
       { n: 'Back squat', s: 5, r: 5, pct: p, of: 'bs' },
-      { n: 'Hip thrust', s: 3, r: 10, rpe: '8' },
+      { n: 'Sumo deadlift', s: 3, r: 8, rpe: '7', note: 'Wide stance, toes out, push the floor apart. Hips close to the bar, lock out with the glutes.' },
       { n: 'GHD sit-up', s: 3, r: 10 },
     ]});
     out.push({ week: wk, title: 'C&J + front squat', ex: [
@@ -379,7 +379,7 @@ function decSessions() {
     out.push({ week: wk, optional: true, title: 'Legs & glutes pump', ex: [
       { n: 'Bulgarian split squat', s: 3, r: '10/leg', rpe: '8' },
       { n: 'Goblet squat', s: 3, r: 15, rpe: '8', note: 'Heels on plates, slow down.' },
-      { n: 'Hip thrust', s: 3, r: 12, rpe: '8' },
+      { n: 'Sumo deadlift', s: 3, r: 10, rpe: '8', note: 'Wide stance, toes out, push the floor apart. Hips close to the bar, lock out with the glutes.' },
       { n: 'Kettlebell swing', s: 4, r: 15, note: 'Hip snap, not a squat. Squeeze glutes hard at the top.' },
       { n: 'Cable kickback', s: 2, r: '12/leg', rpe: '9' },
       { n: 'DB calf raise', s: 3, r: 15, note: 'One leg at a time, on a plate.' },
@@ -507,7 +507,7 @@ function rsrSessions() {
       { n: 'Power snatch', s: 5, r: 2, pct: 0.65, of: 'snatch' },
       { n: 'Power clean & jerk', s: 4, r: '1+1', pct: 0.65, of: 'cj' },
       squat(wk[2]),
-      { n: 'Hip thrust', s: late ? 2 : 3, r: 12, rpe: '8' },
+      { n: 'Sumo deadlift', s: late ? 2 : 3, r: 6, rpe: '7', note: 'Moderate: the squat comes first. Wide stance, lock out with the glutes.' },
       { n: 'GHD hip extension', s: 3, r: 12, rpe: '8' },
     ]});
   });
@@ -618,6 +618,7 @@ function restMin(e) {
     return p >= 0.9 ? 4 : p >= 0.8 ? 3 : 2;
   }
   if (n === 'Bench press' && (e.pct || 0) >= 0.75) return e.s === 1 || e.pct >= 0.85 ? 3 : 2.5;
+  if (n === 'Sumo deadlift') return 2;
   if (/snatch|clean|jerk|push press|pull$/i.test(n)) return 1.75;
   return 1.25;
 }
@@ -679,7 +680,7 @@ function lastPerfFor(name) {
 // Suggest today's weight from last time vs this session's target RPE.
 // Big lower-body lifts: +5 kg if last RPE was ≥1 below target, +2.5 if at/just below. Oly lifts and
 // accessories: +2.5 only if ≥1 below. Above target or sets left undone: hold.
-const BIG_LIFTS = new Set(['Back squat','Front squat','Pause back squat','Romanian deadlift','Hip thrust','Snatch pull','Clean pull','Good morning']);
+const BIG_LIFTS = new Set(['Back squat','Front squat','Pause back squat','Romanian deadlift','Hip thrust','Sumo deadlift','Snatch pull','Clean pull','Good morning']);
 function suggestW(e) {
   const p = lastPerfFor(e.n);
   if (!p || e.n === 'Box jump') return { w: p ? p.w : null, hint: '' };
