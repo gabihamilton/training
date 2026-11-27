@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-version" content="2026-11-27.1">
+<meta name="app-version" content="2026-11-27.2">
 <title>Training log</title>
 <style>
   :root {
@@ -374,7 +374,7 @@ function decSessions() {
       { n: 'Clean & jerk', s: 5, r: '1+1', pct: p, of: 'cj' },
       { n: 'Front squat', s: 4, r: 4, pct: p, of: 'fs' },
       { n: 'Romanian deadlift', s: 3, r: 8, rpe: '7' },
-      { n: 'GHD sit-up', s: 3, r: 10 },
+      { n: 'Ab wheel rollout', s: 3, r: 8, note: 'From the knees. Ribs down, glutes squeezed, roll only as far as the lower back stays flat. Go further as it gets easy.' },
     ]});
     out.push({ week: wk, optional: true, title: 'Legs & glutes pump', ex: [
       { n: 'Bulgarian split squat', s: 3, r: '10/leg', rpe: '8' },
@@ -438,7 +438,7 @@ function sizeSessions() {
       { n: 'Bayesian cable curl', s: 2, r: '12/arm', rpe: '9', note: 'Stop just short of locking out: stretch, don\'t hang on the joint.' },
       { n: 'Skull crusher', s: t ? 2 : 3, r: '10–12', rpe: '9', note: 'EZ bar or DBs. Or DB overhead extension.' },
       { n: 'Frog pump', s: 2, r: 30, note: 'Glute pump to finish. Band above knees, go to the burn.' },
-      { n: 'GHD sit-up', s: 3, r: 12 },
+      { n: 'Ab wheel rollout', s: 3, r: 8, note: 'From the knees. Ribs down, glutes squeezed, roll only as far as the lower back stays flat. Go further as it gets easy.' },
     ]});
     out.push({ week: wk, title: t ? 'Front squat TEST + hinge' : 'Clean + hinge', ex: t ? [
       { n: 'Clean', s: 3, r: 2, pct: 0.65, of: 'cj', note: 'Light, fast. Warm-up for the test.' },
@@ -493,7 +493,7 @@ function rsrSessions() {
       { n: 'Clean & jerk', s: 5, r: '1+1', pct: oly[w], of: 'cj' },
       squat(wk[1]),
       { n: 'Romanian deadlift', s: 3, r: 6, rpe: '7' },
-      { n: 'GHD sit-up', s: 3, r: 12 },
+      { n: 'Ab wheel rollout', s: 3, r: 8, note: 'From the knees. Ribs down, glutes squeezed, roll only as far as the lower back stays flat. Go further as it gets easy.' },
     ]});
     out.push({ week: n, title: 'Bench volume + arms', ex: [
       { n: 'Bench press', s: 3, r: late ? 6 : 8, rpe: '7.5', note: 'Touch and go, controlled.' },
@@ -619,6 +619,7 @@ function restMin(e) {
   }
   if (n === 'Bench press' && (e.pct || 0) >= 0.75) return e.s === 1 || e.pct >= 0.85 ? 3 : 2.5;
   if (n === 'Sumo deadlift') return 2;
+  if (n === 'Ab wheel rollout') return 1;
   if (/snatch|clean|jerk|push press|pull$/i.test(n)) return 1.75;
   return 1.25;
 }

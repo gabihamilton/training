@@ -43,7 +43,7 @@ A personal training app plus the program it runs. Live at https://gabihamilton.g
 
 ## CERN gym equipment
 Barbells, plates, rig, dumbbells, benches, **cables**, **GHD** (loves GHD sit-ups; one cushion is flat),
-sled (push/pull), plyo boxes (box jumps for height), kettlebells, mats.
+sled (push/pull), ab wheel (loves it, alternate with GHD sit-ups), plyo boxes (box jumps for height), kettlebells, mats.
 **No leg machines** (no leg press, leg curl machine, calf machine, back extension).
 
 ## Program (session queue, not calendar)
